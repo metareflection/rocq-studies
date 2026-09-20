@@ -1,0 +1,444 @@
+$ /Users/namin/code/eric/rocq/_build/install/default/bin/rocq compile -q -boot -R ../../_build/default/theories/Corelib Corelib -Q . TerminationStudy -test-mode L02_Obligations.v
+4 obligation(s) remaining: 
+Obligation 1 of euclid_trace_func:
+(forall a b : nat,
+ (forall a0 b0 : nat, a0 + b0 < a + b -> nat) ->
+ forall a' b' : nat, S a' = a -> S b' = b -> S a' + (S b' - S a') < a + b).
+ 
+Obligation 2 of euclid_trace_func:
+(forall a b : nat,
+ (forall a0 b0 : nat, a0 + b0 < a + b -> nat) ->
+ forall a' b' : nat, S a' = a -> S b' = b -> S a' - S b' + S b' < a + b).
+ 
+Obligation 3 of euclid_trace_func:
+(forall (a b : nat)
+   (euclid_trace : forall a0 b0 : nat, a0 + b0 < a + b -> nat),
+ let program_branch_0 :=
+   fun (wildcard' : nat) (_ : 0 = a) (_ : wildcard' = b) => b in
+ let program_branch_1 :=
+   fun (wildcard' : nat)
+     (_ : forall wildcard'0 : nat, ~ (0 = wildcard' /\ wildcard'0 = 0))
+     (_ : wildcard' = a) (_ : 0 = b) =>
+   a in
+ let program_branch_2 :=
+   fun (a' b' : nat) (Heq_a : S a' = a) (Heq_b : S b' = b) =>
+   if S a' <=? S b'
+   then
+    euclid_trace (S a') (S b' - S a')
+      (euclid_trace_func_obligation_1 a b euclid_trace a' b' Heq_a Heq_b)
+   else
+    euclid_trace (S a' - S b') (S b')
+      (euclid_trace_func_obligation_2 a b euclid_trace a' b' Heq_a Heq_b)
+   in
+ forall n : nat,
+ let wildcard' := S n in
+ forall wildcard'0 : nat, ~ (0 = wildcard' /\ wildcard'0 = 0)).
+ 
+Obligation 4 of euclid_trace_func:
+(well_founded
+   (MR lt
+      (fun recarg : {_ : nat & nat} =>
+       let a := projT1 recarg in let b := projT2 recarg in a + b))).
+ 
+euclid_trace_func :
+(forall recarg : {_ : nat & nat},
+ let a := projT1 recarg in let b := projT2 recarg in nat)
+:=
+(Fix_sub {_ : nat & nat}
+   (MR lt
+      (fun recarg : {_ : nat & nat} =>
+       let a := projT1 recarg in let b := projT2 recarg in a + b))
+   euclid_trace_func_obligation_4
+   (fun recarg : {_ : nat & nat} =>
+    let a := projT1 recarg in let b := projT2 recarg in nat)
+   (fun (recarg : {_ : nat & nat})
+      (euclid_trace' : forall
+                         recarg' : {recarg' : {_ : nat & nat}
+                                   | (let a := projT1 recarg' in
+                                      let b := projT2 recarg' in a + b) <
+                                     (let a := projT1 recarg in
+                                      let b := projT2 recarg in a + b)},
+                       let a := projT1 (proj1_sig recarg') in
+                       let b := projT2 (proj1_sig recarg') in nat) =>
+    let a := projT1 recarg in
+    let b := projT2 recarg in
+    let euclid_trace :=
+      fun (a0 b0 : nat) (recproof : a0 + b0 < a + b) =>
+      euclid_trace'
+        (exist
+           (fun recarg' : {_ : nat & nat} =>
+            (let a1 := projT1 recarg' in let b1 := projT2 recarg' in a1 + b1) <
+            (let a1 := projT1 recarg in let b1 := projT2 recarg in a1 + b1))
+           (existT (fun _ : nat => nat) a0 b0) recproof)
+      in
+    let program_branch_0 :=
+      fun (wildcard' : nat) (_ : 0 = a) (_ : wildcard' = b) => b in
+    let program_branch_1 :=
+      fun (wildcard' : nat)
+        (_ : forall wildcard'0 : nat, ~ (0 = wildcard' /\ wildcard'0 = 0))
+        (_ : wildcard' = a) (_ : 0 = b) =>
+      a in
+    let program_branch_2 :=
+      fun (a' b' : nat) (Heq_a : S a' = a) (Heq_b : S b' = b) =>
+      if S a' <=? S b'
+      then
+       euclid_trace (S a') (S b' - S a')
+         (euclid_trace_func_obligation_1 a b euclid_trace a' b' Heq_a Heq_b)
+      else
+       euclid_trace (S a' - S b') (S b')
+         (euclid_trace_func_obligation_2 a b euclid_trace a' b' Heq_a Heq_b)
+      in
+    match a as a' return a' = a -> b = b -> nat with
+    | 0 => program_branch_0 b
+    | S a' =>
+        match b as b' return S a' = a -> b' = b -> nat with
+        | 0 =>
+            program_branch_1 (S a')
+              (euclid_trace_func_obligation_3 a b euclid_trace a')
+        | S b' => program_branch_2 a' b'
+        end
+    end eq_refl eq_refl))
+File "./L02_Obligations.v", line 36, characters 11-23:
+The command has indeed failed with message:
+The reference euclid_trace was not found in the current environment.
+File "./L02_Obligations.v", line 37, characters 11-28:
+The command has indeed failed with message:
+The reference euclid_trace_func was not found in the current environment.
+Did you mean euclid_sub_func?
+1 goal
+  
+  a, b : nat
+  recurse : forall a0 b0 : nat, a0 + b0 < a + b -> nat
+  a', b' : nat
+  Ha : S a' = a
+  Hb : S b' = b
+  ============================
+  S a' + (S b' - S a') < a + b
+1 goal
+  
+  a', b' : nat
+  recurse : forall a b : nat, a + b < S a' + S b' -> nat
+  ============================
+  S a' + (S b' - S a') < S a' + S b'
+euclid_trace_func_obligation_1
+     : forall a b : nat,
+       (forall a0 b0 : nat, a0 + b0 < a + b -> nat) ->
+       forall a' b' : nat,
+       S a' = a -> S b' = b -> S a' + (S b' - S a') < a + b
+euclid_trace_func_obligation_1 =
+fun (a b : nat) (recurse : forall a0 b0 : nat, a0 + b0 < a + b -> nat)
+  (a' b' : nat) (Ha : S a' = a) (Hb : S b' = b) =>
+eq_ind (S a')
+  (fun a0 : nat =>
+   (forall a1 b0 : nat, a1 + b0 < a0 + b -> nat) ->
+   S a' + (S b' - S a') < a0 + b)
+  (fun recurse0 : forall a0 b0 : nat, a0 + b0 < S a' + b -> nat =>
+   eq_ind (S b')
+     (fun b0 : nat =>
+      (forall a0 b1 : nat, a0 + b1 < S a' + b0 -> nat) ->
+      S a' + (S b' - S a') < S a' + b0)
+     (fun _ : forall a0 b0 : nat, a0 + b0 < S a' + S b' -> nat =>
+      TerminationFacts.subtract_right_decreases a' b')
+     b Hb recurse0)
+  a Ha recurse
+     : forall a b : nat,
+       (forall a0 b0 : nat, a0 + b0 < a + b -> nat) ->
+       forall a' b' : nat,
+       S a' = a -> S b' = b -> S a' + (S b' - S a') < a + b
+
+Arguments euclid_trace_func_obligation_1 (a b)%_nat_scope
+  recurse%_function_scope (a' b')%_nat_scope Ha Hb
+File "./L02_Obligations.v", line 54, characters 11-23:
+The command has indeed failed with message:
+The reference euclid_trace was not found in the current environment.
+3 obligation(s) remaining: 
+Obligation 2 of euclid_trace_func:
+(forall a b : nat,
+ (forall a0 b0 : nat, a0 + b0 < a + b -> nat) ->
+ forall a' b' : nat, S a' = a -> S b' = b -> S a' - S b' + S b' < a + b).
+ 
+Obligation 3 of euclid_trace_func:
+(forall (a b : nat)
+   (euclid_trace : forall a0 b0 : nat, a0 + b0 < a + b -> nat),
+ let program_branch_0 :=
+   fun (wildcard' : nat) (_ : 0 = a) (_ : wildcard' = b) => b in
+ let program_branch_1 :=
+   fun (wildcard' : nat)
+     (_ : forall wildcard'0 : nat, ~ (0 = wildcard' /\ wildcard'0 = 0))
+     (_ : wildcard' = a) (_ : 0 = b) =>
+   a in
+ let program_branch_2 :=
+   fun (a' b' : nat) (Heq_a : S a' = a) (Heq_b : S b' = b) =>
+   if S a' <=? S b'
+   then
+    euclid_trace (S a') (S b' - S a')
+      ((fun (a0 b0 : nat)
+          (recurse : forall a1 b1 : nat, a1 + b1 < a0 + b0 -> nat)
+          (a'0 b'0 : nat) (Ha : S a'0 = a0) (Hb : S b'0 = b0) =>
+        euclid_trace_func_obligation_1 a0 b0 recurse a'0 b'0 Ha Hb) a b
+         euclid_trace a' b' Heq_a Heq_b)
+   else
+    euclid_trace (S a' - S b') (S b')
+      (euclid_trace_func_obligation_2 a b euclid_trace a' b' Heq_a Heq_b)
+   in
+ forall n : nat,
+ let wildcard' := S n in
+ forall wildcard'0 : nat, ~ (0 = wildcard' /\ wildcard'0 = 0)).
+ 
+Obligation 4 of euclid_trace_func:
+(well_founded
+   (MR lt
+      (fun recarg : {_ : nat & nat} =>
+       let a := projT1 recarg in let b := projT2 recarg in a + b))).
+ 
+1 goal
+  
+  ============================
+  forall (a b : nat)
+    (euclid_trace : forall a0 b0 : nat, a0 + b0 < a + b -> nat),
+  let program_branch_0 :=
+    fun (wildcard' : nat) (_ : 0 = a) (_ : wildcard' = b) => b in
+  let program_branch_1 :=
+    fun (wildcard' : nat)
+      (_ : forall wildcard'0 : nat, ~ (0 = wildcard' /\ wildcard'0 = 0))
+      (_ : wildcard' = a) (_ : 0 = b) =>
+    a in
+  let program_branch_2 :=
+    fun (a' b' : nat) (Heq_a : S a' = a) (Heq_b : S b' = b) =>
+    if S a' <=? S b'
+    then
+     euclid_trace (S a') (S b' - S a')
+       ((fun (a0 b0 : nat)
+           (recurse : forall a1 b1 : nat, a1 + b1 < a0 + b0 -> nat)
+           (a'0 b'0 : nat) (Ha : S a'0 = a0) (Hb : S b'0 = b0) =>
+         euclid_trace_func_obligation_1 a0 b0 recurse a'0 b'0 Ha Hb) a b
+          euclid_trace a' b' Heq_a Heq_b)
+    else
+     euclid_trace (S a' - S b') (S b')
+       ((fun (a0 b0 : nat)
+           (recurse : forall a1 b1 : nat, a1 + b1 < a0 + b0 -> nat)
+           (a'0 b'0 : nat) (Ha : S a'0 = a0) (Hb : S b'0 = b0) =>
+         euclid_trace_func_obligation_2 a0 b0 recurse a'0 b'0 Ha Hb) a b
+          euclid_trace a' b' Heq_a Heq_b)
+    in
+  forall n : nat,
+  let wildcard' := S n in
+  forall wildcard'0 : nat, ~ (0 = wildcard' /\ wildcard'0 = 0)
+File "./L02_Obligations.v", line 70, characters 11-23:
+The command has indeed failed with message:
+The reference euclid_trace was not found in the current environment.
+File "./L02_Obligations.v", line 71, characters 11-28:
+The command has indeed failed with message:
+The reference euclid_trace_func was not found in the current environment.
+Did you mean euclid_sub_func?
+1 obligation(s) remaining: 
+Obligation 4 of euclid_trace_func:
+(well_founded
+   (MR lt
+      (fun recarg : {_ : nat & nat} =>
+       let a := projT1 recarg in let b := projT2 recarg in a + b))).
+ 
+euclid_trace_func :
+(forall recarg : {_ : nat & nat},
+ let a := projT1 recarg in let b := projT2 recarg in nat)
+:=
+(Fix_sub {_ : nat & nat}
+   (MR lt
+      (fun recarg : {_ : nat & nat} =>
+       let a := projT1 recarg in let b := projT2 recarg in a + b))
+   euclid_trace_func_obligation_4
+   (fun recarg : {_ : nat & nat} =>
+    let a := projT1 recarg in let b := projT2 recarg in nat)
+   (fun (recarg : {_ : nat & nat})
+      (euclid_trace' : forall
+                         recarg' : {recarg' : {_ : nat & nat}
+                                   | (let a := projT1 recarg' in
+                                      let b := projT2 recarg' in a + b) <
+                                     (let a := projT1 recarg in
+                                      let b := projT2 recarg in a + b)},
+                       let a := projT1 (proj1_sig recarg') in
+                       let b := projT2 (proj1_sig recarg') in nat) =>
+    let a := projT1 recarg in
+    let b := projT2 recarg in
+    let euclid_trace :=
+      fun (a0 b0 : nat) (recproof : a0 + b0 < a + b) =>
+      euclid_trace'
+        (exist
+           (fun recarg' : {_ : nat & nat} =>
+            (let a1 := projT1 recarg' in let b1 := projT2 recarg' in a1 + b1) <
+            (let a1 := projT1 recarg in let b1 := projT2 recarg in a1 + b1))
+           (existT (fun _ : nat => nat) a0 b0) recproof)
+      in
+    let program_branch_0 :=
+      fun (wildcard' : nat) (_ : 0 = a) (_ : wildcard' = b) => b in
+    let program_branch_1 :=
+      fun (wildcard' : nat)
+        (_ : forall wildcard'0 : nat, ~ (0 = wildcard' /\ wildcard'0 = 0))
+        (_ : wildcard' = a) (_ : 0 = b) =>
+      a in
+    let program_branch_2 :=
+      fun (a' b' : nat) (Heq_a : S a' = a) (Heq_b : S b' = b) =>
+      if S a' <=? S b'
+      then
+       euclid_trace (S a') (S b' - S a')
+         (euclid_trace_func_obligation_1 a b euclid_trace a' b' Heq_a Heq_b)
+      else
+       euclid_trace (S a' - S b') (S b')
+         (euclid_trace_func_obligation_2 a b euclid_trace a' b' Heq_a Heq_b)
+      in
+    match a as a' return a' = a -> b = b -> nat with
+    | 0 => program_branch_0 b
+    | S a' =>
+        match b as b' return S a' = a -> b' = b -> nat with
+        | 0 =>
+            program_branch_1 (S a')
+              (euclid_trace_func_obligation_3 a b euclid_trace a')
+        | S b' => program_branch_2 a' b'
+        end
+    end eq_refl eq_refl))
+1 goal
+  
+  ============================
+  well_founded
+    (MR lt
+       (fun recarg : {_ : nat & nat} =>
+        let a := projT1 recarg in let b := projT2 recarg in a + b))
+euclid_trace_func
+     : forall recarg : {_ : nat & nat},
+       let a := projT1 recarg in let b := projT2 recarg in nat
+euclid_trace
+     : nat -> nat -> nat
+euclid_trace =
+fun a b : nat => euclid_trace_func (existT (fun _ : nat => nat) a b)
+     : nat -> nat -> nat
+
+Arguments euclid_trace (a b)%_nat_scope
+euclid_trace_func =
+Fix_sub {_ : nat & nat}
+  (MR lt
+     (fun recarg : {_ : nat & nat} =>
+      let a := projT1 recarg in let b := projT2 recarg in a + b))
+  euclid_trace_func_obligation_4
+  (fun recarg : {_ : nat & nat} =>
+   let a := projT1 recarg in let b := projT2 recarg in nat)
+  (fun (recarg : {_ : nat & nat})
+     (euclid_trace' : forall
+                        recarg' : {recarg' : {_ : nat & nat}
+                                  | (let a := projT1 recarg' in
+                                     let b := projT2 recarg' in a + b) <
+                                    (let a := projT1 recarg in
+                                     let b := projT2 recarg in a + b)},
+                      let a := projT1 (proj1_sig recarg') in
+                      let b := projT2 (proj1_sig recarg') in nat) =>
+   let a := projT1 recarg in
+   let b := projT2 recarg in
+   let euclid_trace :=
+     fun (a0 b0 : nat) (recproof : a0 + b0 < a + b) =>
+     euclid_trace'
+       (exist
+          (fun recarg' : {_ : nat & nat} =>
+           (let a1 := projT1 recarg' in let b1 := projT2 recarg' in a1 + b1) <
+           (let a1 := projT1 recarg in let b1 := projT2 recarg in a1 + b1))
+          (existT (fun _ : nat => nat) a0 b0) recproof)
+     in
+   let program_branch_0 :=
+     fun (wildcard' : nat) (_ : 0 = a) (_ : wildcard' = b) => b in
+   let program_branch_1 :=
+     fun (wildcard' : nat)
+       (_ : forall wildcard'0 : nat, ~ (0 = wildcard' /\ wildcard'0 = 0))
+       (_ : wildcard' = a) (_ : 0 = b) =>
+     a in
+   let program_branch_2 :=
+     fun (a' b' : nat) (Heq_a : S a' = a) (Heq_b : S b' = b) =>
+     if S a' <=? S b'
+     then
+      euclid_trace (S a') (S b' - S a')
+        ((fun (a0 b0 : nat)
+            (recurse : forall a1 b1 : nat, a1 + b1 < a0 + b0 -> nat)
+            (a'0 b'0 : nat) (Ha : S a'0 = a0) (Hb : S b'0 = b0) =>
+          euclid_trace_func_obligation_1 a0 b0 recurse a'0 b'0 Ha Hb) a b
+           euclid_trace a' b' Heq_a Heq_b)
+     else
+      euclid_trace (S a' - S b') (S b')
+        ((fun (a0 b0 : nat)
+            (recurse : forall a1 b1 : nat, a1 + b1 < a0 + b0 -> nat)
+            (a'0 b'0 : nat) (Ha : S a'0 = a0) (Hb : S b'0 = b0) =>
+          euclid_trace_func_obligation_2 a0 b0 recurse a'0 b'0 Ha Hb) a b
+           euclid_trace a' b' Heq_a Heq_b)
+     in
+   match a as a' return a' = a -> b = b -> nat with
+   | 0 => program_branch_0 b
+   | S a' =>
+       match b as b' return S a' = a -> b' = b -> nat with
+       | 0 =>
+           program_branch_1 (S a')
+             ((fun (a0 b0 : nat)
+                 (_ : forall a1 b1 : nat, a1 + b1 < a0 + b0 -> nat)
+                 (n wildcard' : nat) =>
+               euclid_trace_func_obligation_3 n wildcard') a b euclid_trace
+                a')
+       | S b' => program_branch_2 a' b'
+       end
+   end eq_refl eq_refl)
+     : forall recarg : {_ : nat & nat},
+       let a := projT1 recarg in let b := projT2 recarg in nat
+
+Arguments euclid_trace_func recarg
+euclid_trace_func_obligation_2 =
+fun (a b : nat) (recurse : forall a0 b0 : nat, a0 + b0 < a + b -> nat)
+  (a' b' : nat) (Ha : S a' = a) (Hb : S b' = b) =>
+eq_ind (S a')
+  (fun a0 : nat =>
+   (forall a1 b0 : nat, a1 + b0 < a0 + b -> nat) ->
+   S a' - S b' + S b' < a0 + b)
+  (fun recurse0 : forall a0 b0 : nat, a0 + b0 < S a' + b -> nat =>
+   eq_ind (S b')
+     (fun b0 : nat =>
+      (forall a0 b1 : nat, a0 + b1 < S a' + b0 -> nat) ->
+      S a' - S b' + S b' < S a' + b0)
+     (fun _ : forall a0 b0 : nat, a0 + b0 < S a' + S b' -> nat =>
+      TerminationFacts.subtract_left_decreases a' b')
+     b Hb recurse0)
+  a Ha recurse
+     : forall a b : nat,
+       (forall a0 b0 : nat, a0 + b0 < a + b -> nat) ->
+       forall a' b' : nat, S a' = a -> S b' = b -> S a' - S b' + S b' < a + b
+
+Arguments euclid_trace_func_obligation_2 (a b)%_nat_scope
+  recurse%_function_scope (a' b')%_nat_scope Ha Hb
+euclid_trace_func_obligation_3 =
+fun n : nat =>
+let wildcard' := S n in
+fun (wildcard'0 : nat) (H : 0 = wildcard' /\ wildcard'0 = 0) =>
+and_ind
+  (fun (H0 : 0 = wildcard') (_ : wildcard'0 = 0) =>
+   let H1 : False :=
+     eq_ind 0 (fun e : nat => match e with
+                              | 0 => True
+                              | S _ => False
+                              end)
+       I wildcard' H0
+     in
+   False_ind False H1)
+  H
+     : forall n : nat,
+       let wildcard' := S n in
+       forall wildcard'0 : nat, ~ (0 = wildcard' /\ wildcard'0 = 0)
+
+Arguments euclid_trace_func_obligation_3 (n wildcard')%_nat_scope _
+euclid_trace_func_obligation_4 =
+measure_wf TerminationFacts.nat_lt_wf
+  (fun recarg : {_ : nat & nat} =>
+   let a := projT1 recarg in let b := projT2 recarg in a + b)
+     : well_founded
+         (MR lt
+            (fun recarg : {_ : nat & nat} =>
+             let a := projT1 recarg in let b := projT2 recarg in a + b))
+
+Arguments euclid_trace_func_obligation_4 a
+     = 6
+     : nat
+Closed under the global context
+
+[exit 0]
+

@@ -1,0 +1,72 @@
+$ /Users/namin/code/eric/rocq/_build/install/default/bin/rocq compile -q -boot -R ../../_build/default/theories/Corelib Corelib -Q . TerminationStudy -test-mode L03_Accessibility.v
+Inductive Acc (A : Type) (R : A -> A -> Prop) (x : A) : Prop :=
+    Acc_intro : (forall y : A, R y x -> Acc R y) -> Acc R x.
+
+Arguments Acc [A]%_type_scope R%_function_scope x
+Arguments Acc_intro [A]%_type_scope [R]%_function_scope x _%_function_scope
+Acc_inv =
+fun (A : Type) (R : A -> A -> Prop) (x : A) (H : Acc R x) =>
+match H with
+| Acc_intro _ x0 => (fun H0 : forall y : A, R y x -> Acc R y => H0) x0
+end
+     : forall [A : Type] [R : A -> A -> Prop] [x : A],
+       Acc R x -> forall [y : A], R y x -> Acc R y
+
+Arguments Acc_inv [A]%_type_scope [R]%_function_scope 
+  [x] _ [y] _, [_] [_] [_] _ _ _
+well_founded =
+fun (A : Type) (R : A -> A -> Prop) => forall a : A, Acc R a
+     : forall [A : Type], (A -> A -> Prop) -> Prop
+
+Arguments well_founded [A]%_type_scope R%_function_scope
+right_call
+     : forall a' b' : nat,
+       {child : State | smaller child (pack (S a') (S b'))}
+     = existT (fun _ : nat => nat) 18 30
+     : State
+     = 66
+     : nat
+     = 48
+     : nat
+right_child_accessible
+     : forall a' b' : nat,
+       Acc smaller (pack (S a') (S b')) ->
+       Acc smaller (proj1_sig (right_call a' b'))
+Closed under the global context
+Closed under the global context
+Fix_sub =
+fun (A : Type) (R : A -> A -> Prop) (Rwf : well_founded R) 
+  (P : A -> Type)
+  (F_sub : forall x : A, (forall y : {y : A | R y x}, P (proj1_sig y)) -> P x)
+  (x : A) =>
+Fix_F_sub A R P F_sub x (Rwf x)
+     : forall (A : Type) (R : A -> A -> Prop),
+       well_founded R ->
+       forall P : A -> Type,
+       (forall x : A, (forall y : {y : A | R y x}, P (proj1_sig y)) -> P x) ->
+       forall x : A, P x
+
+Arguments Fix_sub A%_type_scope R%_function_scope 
+  Rwf (P F_sub)%_function_scope x
+Fix_F_sub =
+fun (A : Type) (R : A -> A -> Prop) (P : A -> Type)
+  (F_sub : forall x : A, (forall y : {y : A | R y x}, P (proj1_sig y)) -> P x) =>
+fix Fix_F_sub (x : A) (r : Acc R x) {struct r} : P x :=
+  F_sub x
+    (fun y : {y : A | R y x} =>
+     Fix_F_sub (proj1_sig y) (Acc_inv r (proj2_sig y)))
+     : forall (A : Type) (R : A -> A -> Prop) (P : A -> Type),
+       (forall x : A, (forall y : {y : A | R y x}, P (proj1_sig y)) -> P x) ->
+       forall x : A, Acc R x -> P x
+
+Arguments Fix_F_sub A%_type_scope (R P F_sub)%_function_scope x r
+Closed under the global context
+Acc_rect
+     : forall (A : Type) (R : A -> A -> Prop) (P : A -> Type),
+       (forall x : A,
+        (forall y : A, R y x -> Acc R y) ->
+        (forall y : A, R y x -> P y) -> P x) ->
+       forall x : A, Acc R x -> P x
+
+[exit 0]
+

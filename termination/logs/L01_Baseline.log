@@ -1,0 +1,84 @@
+$ /Users/namin/code/eric/rocq/_build/install/default/bin/rocq compile -q -boot -R ../../_build/default/theories/Corelib Corelib -Q . TerminationStudy -test-mode L01_Baseline.v
+Guard Checking is on
+Universe Checking is on
+euclid_sub
+     : nat -> nat -> nat
+     = 6
+     : nat
+     = 6
+     : nat
+     = 5
+     : nat
+     = 5
+     : nat
+Closed under the global context
+Closed under the global context
+File "./L01_Baseline.v", line 48, characters 0-218:
+The command has indeed failed with message:
+Cannot guess decreasing argument of fix.
+File "./L01_Baseline.v", line 64, characters 0-250:
+The command has indeed failed with message:
+Recursive definition of structural_a is ill-formed.
+In environment
+structural_a : nat -> nat -> nat
+a : nat
+b : nat
+a' : nat
+b' : nat
+Recursive call to structural_a has principal argument equal to 
+"S a'" instead of "a'".
+Recursive definition is:
+"fun a b : nat =>
+ match a with
+ | 0 => b
+ | S a' =>
+     match b with
+     | 0 => a
+     | S b' =>
+         if S a' <=? S b'
+         then structural_a (S a') (S b' - S a')
+         else structural_a (S a' - S b') (S b')
+     end
+ end".
+File "./L01_Baseline.v", line 74, characters 0-250:
+The command has indeed failed with message:
+Recursive definition of structural_b is ill-formed.
+In environment
+structural_b : nat -> nat -> nat
+a : nat
+b : nat
+a' : nat
+b' : nat
+Recursive call to structural_b has principal argument equal to 
+"S b'" instead of "b'".
+Recursive definition is:
+"fun a b : nat =>
+ match a with
+ | 0 => b
+ | S a' =>
+     match b with
+     | 0 => a
+     | S b' =>
+         if S a' <=? S b'
+         then structural_b (S a') (S b' - S a')
+         else structural_b (S a' - S b') (S b')
+     end
+ end".
+File "./L01_Baseline.v", line 84, characters 11-16:
+The command has indeed failed with message:
+The reference plain was not found in the current environment.
+File "./L01_Baseline.v", line 85, characters 11-23:
+The command has indeed failed with message:
+The reference structural_a was not found in the current environment.
+File "./L01_Baseline.v", line 86, characters 11-23:
+The command has indeed failed with message:
+The reference structural_b was not found in the current environment.
+TerminationFacts.subtract_right_decreases
+     : forall a b : nat, S a + (S b - S a) < S a + S b
+TerminationFacts.subtract_left_decreases
+     : forall a b : nat, S a - S b + S b < S a + S b
+TerminationFacts.nat_lt_wf
+     : well_founded lt
+
+[exit 0]
+

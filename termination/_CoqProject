@@ -1,0 +1,9 @@
+-arg -q
+-arg -boot
+-R ../../_build/default/theories/Corelib Corelib
+-Q . TerminationStudy
+Euclid.v
+L01_Baseline.v
+L02_Obligations.v
+L03_Accessibility.v
+L04_Admission.v

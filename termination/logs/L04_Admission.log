@@ -1,0 +1,106 @@
+$ /Users/namin/code/eric/rocq/_build/install/default/bin/rocq compile -q -boot -R ../../_build/default/theories/Corelib Corelib -Q . TerminationStudy -test-mode L04_Admission.v
+euclid_trace =
+fun a b : nat => euclid_trace_func (existT (fun _ : nat => nat) a b)
+     : nat -> nat -> nat
+
+Arguments euclid_trace (a b)%_nat_scope
+euclid_trace_func =
+Fix_sub {_ : nat & nat}
+  (MR lt
+     (fun recarg : {_ : nat & nat} =>
+      let a := projT1 recarg in let b := projT2 recarg in a + b))
+  L02_Obligations.euclid_trace_func_obligation_4
+  (fun recarg : {_ : nat & nat} =>
+   let a := projT1 recarg in let b := projT2 recarg in nat)
+  (fun (recarg : {_ : nat & nat})
+     (euclid_trace' : forall
+                        recarg' : {recarg' : {_ : nat & nat}
+                                  | (let a := projT1 recarg' in
+                                     let b := projT2 recarg' in a + b) <
+                                    (let a := projT1 recarg in
+                                     let b := projT2 recarg in a + b)},
+                      let a := projT1 (proj1_sig recarg') in
+                      let b := projT2 (proj1_sig recarg') in nat) =>
+   let a := projT1 recarg in
+   let b := projT2 recarg in
+   let euclid_trace :=
+     fun (a0 b0 : nat) (recproof : a0 + b0 < a + b) =>
+     euclid_trace'
+       (exist
+          (fun recarg' : {_ : nat & nat} =>
+           (let a1 := projT1 recarg' in let b1 := projT2 recarg' in a1 + b1) <
+           (let a1 := projT1 recarg in let b1 := projT2 recarg in a1 + b1))
+          (existT (fun _ : nat => nat) a0 b0) recproof)
+     in
+   let program_branch_0 :=
+     fun (wildcard' : nat) (_ : 0 = a) (_ : wildcard' = b) => b in
+   let program_branch_1 :=
+     fun (wildcard' : nat)
+       (_ : forall wildcard'0 : nat, ~ (0 = wildcard' /\ wildcard'0 = 0))
+       (_ : wildcard' = a) (_ : 0 = b) =>
+     a in
+   let program_branch_2 :=
+     fun (a' b' : nat) (Heq_a : S a' = a) (Heq_b : S b' = b) =>
+     if S a' <=? S b'
+     then
+      euclid_trace (S a') (S b' - S a')
+        ((fun (a0 b0 : nat)
+            (recurse : forall a1 b1 : nat, a1 + b1 < a0 + b0 -> nat)
+            (a'0 b'0 : nat) (Ha : S a'0 = a0) (Hb : S b'0 = b0) =>
+          L02_Obligations.euclid_trace_func_obligation_1 a0 b0 recurse a'0
+            b'0 Ha Hb)
+           a b euclid_trace a' b' Heq_a Heq_b)
+     else
+      euclid_trace (S a' - S b') (S b')
+        ((fun (a0 b0 : nat)
+            (recurse : forall a1 b1 : nat, a1 + b1 < a0 + b0 -> nat)
+            (a'0 b'0 : nat) (Ha : S a'0 = a0) (Hb : S b'0 = b0) =>
+          L02_Obligations.euclid_trace_func_obligation_2 a0 b0 recurse a'0
+            b'0 Ha Hb)
+           a b euclid_trace a' b' Heq_a Heq_b)
+     in
+   match a as a' return a' = a -> b = b -> nat with
+   | 0 => program_branch_0 b
+   | S a' =>
+       match b as b' return S a' = a -> b' = b -> nat with
+       | 0 =>
+           program_branch_1 (S a')
+             ((fun (a0 b0 : nat)
+                 (_ : forall a1 b1 : nat, a1 + b1 < a0 + b0 -> nat)
+                 (n wildcard' : nat) =>
+               L02_Obligations.euclid_trace_func_obligation_3 n wildcard') a
+                b euclid_trace a')
+       | S b' => program_branch_2 a' b'
+       end
+   end eq_refl eq_refl)
+     : forall recarg : {_ : nat & nat},
+       let a := projT1 recarg in let b := projT2 recarg in nat
+
+Arguments euclid_trace_func recarg
+L02_Obligations.euclid_trace_func_obligation_1
+     : forall a b : nat,
+       (forall a0 b0 : nat, a0 + b0 < a + b -> nat) ->
+       forall a' b' : nat,
+       S a' = a -> S b' = b -> S a' + (S b' - S a') < a + b
+L02_Obligations.euclid_trace_func_obligation_2
+     : forall a b : nat,
+       (forall a0 b0 : nat, a0 + b0 < a + b -> nat) ->
+       forall a' b' : nat, S a' = a -> S b' = b -> S a' - S b' + S b' < a + b
+L02_Obligations.euclid_trace_func_obligation_3
+     : forall n : nat,
+       let wildcard' := S n in
+       forall wildcard'0 : nat, ~ (0 = wildcard' /\ wildcard'0 = 0)
+L02_Obligations.euclid_trace_func_obligation_4
+     : well_founded
+         (MR lt
+            (fun recarg : {_ : nat & nat} =>
+             let a := projT1 recarg in let b := projT2 recarg in a + b))
+Closed under the global context
+Closed under the global context
+Closed under the global context
+Closed under the global context
+Closed under the global context
+Closed under the global context
+
+[exit 0]
+

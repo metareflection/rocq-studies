@@ -1,0 +1,13 @@
+$ /Users/namin/code/eric/rocq/_build/install/default/bin/rocq compile -q -boot -R ../../_build/default/theories/Corelib Corelib -Q . TerminationStudy Euclid.v
+     = 6
+     : nat
+     = 6
+     : nat
+     = 5
+     : nat
+     = 5
+     : nat
+Closed under the global context
+
+[exit 0]
+
