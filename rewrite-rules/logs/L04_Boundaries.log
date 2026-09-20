@@ -1,0 +1,26 @@
+$ /Users/namin/code/eric/rocq/_build/install/default/bin/rocq compile -q -boot -test-mode -R ../../_build/default/theories/Corelib Corelib -Q . RewriteStudy -allow-rewrite-rules L04_Boundaries.v
+Guard Checking is on
+Universe Checking is on
+     = 1
+     : nat
+File "./L04_Boundaries.v", line 45, characters 42-46:
+Warning: This rewrite rule breaks subject reduction
+(the replacement term doesn't have the type of the pattern).
+The term "true" has type "bool" while it is expected to have type "nat".
+[rewrite-rules-break-SR,rewrite-rules,default]
+mistyped
+     : nat
+     = true
+     : nat
+true
+     : bool
+File "./L04_Boundaries.v", line 54, characters 50-54:
+The command has indeed failed with message:
+The term "true" has type "bool" while it is expected to have type "nat".
+Axioms:
+mistyped : nat
+Theory:
+Rewrite rules are allowed (subject reduction might be broken)
+
+[exit 0]
+

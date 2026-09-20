@@ -1,0 +1,36 @@
+$ /Users/namin/code/eric/rocq/_build/install/default/bin/rocq compile -q -boot -test-mode -R ../../_build/default/theories/Corelib Corelib -Q . RewriteStudy -allow-rewrite-rules L03_Admission.v
+Guard Checking is on
+Universe Checking is on
+pplus
+     : nat -> nat -> nat
+*** [ pplus : nat -> nat -> nat ]
+
+Arguments pplus (_ _)%_nat_scope
+native_right_zero =
+fun n : nat => eq_refl
+     : forall n : nat, pplus n 0 = n
+
+Arguments native_right_zero n%_nat_scope
+File "./L03_Admission.v", line 23, characters 11-22:
+The command has indeed failed with message:
+The reference pplus_rules was not found in the current environment.
+File "./L03_Admission.v", line 24, characters 11-22:
+The command has indeed failed with message:
+pplus_rules not a defined object.
+imported_computation =
+fun n : nat => eq_refl
+     : forall n : nat, pplus n 0 = n
+
+Arguments imported_computation n%_nat_scope
+imported_reindex =
+fun (P : nat -> Type) (n : nat) (x : P (pplus n 0)) => x
+     : forall (P : nat -> Type) (n : nat), P (pplus n 0) -> P n
+
+Arguments imported_reindex P%_function_scope n%_nat_scope x
+Axioms:
+pplus : nat -> nat -> nat
+Theory:
+Rewrite rules are allowed (subject reduction might be broken)
+
+[exit 0]
+

@@ -1,0 +1,37 @@
+UTC: 2026-09-20T00:56:33.432911+00:00
+cwd: /Users/namin/code/eric/rocq/my-studies/rewrite-rules
+Rocq source: /Users/namin/code/eric/rocq
+OCAMLPATH=/Users/namin/code/eric/rocq/_build/install/default/lib
+$ git -C /Users/namin/code/eric/rocq rev-parse HEAD
+67ab16a375d31812dc1dd788f92d446d7d6dcd45
+
+[exit 0]
+
+$ git -C /Users/namin/code/eric/rocq diff --stat HEAD
+
+[exit 0]
+
+$ /Users/namin/code/eric/rocq/_build/install/default/bin/rocq --version
+The Rocq Prover, version 9.4+alpha
+compiled with OCaml 5.4.1
+
+[exit 0]
+
+$ /Users/namin/code/eric/rocq/_build/install/default/bin/rocq compile -config
+COQLIB=/Users/namin/code/eric/rocq/_build/install/default/lib/coq/
+COQCORELIB=/Users/namin/code/eric/rocq/_build/install/default/lib/coq/../rocq-runtime/
+DOCDIR=/Users/namin/code/eric/rocq/_build/install/default/share/doc/
+OCAMLFIND=/Users/namin/.opam/fresh/bin/ocamlfind
+CAMLFLAGS=-thread -bin-annot -strict-sequence -w +a-4-9-27-40..42-44-45-48-58-67-68-70
+WARN=-warn-error +a-3
+HASNATDYNLINK=true
+COQ_SRC_SUBDIRS=boot config lib clib kernel library engine pretyping interp gramlib parsing proofs tactics toplevel printing ide stm vernac plugins/btauto plugins/cc plugins/derive plugins/extraction plugins/firstorder plugins/funind plugins/ltac plugins/ltac2 plugins/ltac2_ltac1 plugins/micromega plugins/nsatz plugins/ring plugins/rtauto plugins/ssr plugins/ssrmatching plugins/ssrrewrite plugins/syntax
+COQ_NATIVE_COMPILER_DEFAULT=no
+
+[exit 0]
+
+L01_Conversion.v SHA256: 9221700fdcf337bb1586af586fe09415fa67bbe71359f74a0f2bb1afeb818d1b
+L02_Patterns.v SHA256: 68f6aa8f0b4c8b78b0f1fc25d32a9766fcad74af4569011ca35f97f5376b0f24
+L03_Admission.v SHA256: 76e84a055606f0f7e563a4a6d883f571d78c780b00b41582b5c13061068cedb7
+L04_Boundaries.v SHA256: 2cc972a7c2252d0caabb66f822c4a0ed3de8811c03102221189b806c3280ecba
+L05_Triangle.v SHA256: 9722b1cec360b2adb070121409c6f31f3c0c69e1e6bc79fd00a84b51dcde9fea

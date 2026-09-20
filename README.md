@@ -5,6 +5,7 @@ Runnable, annotated studies of Rocq's implementation and proof mechanisms. Each 
 | Study | Start here | Focus |
 | --- | --- | --- |
 | [Termination](termination/README.md) | [Lesson 1](termination/L01_Baseline.v) | Follow a recursive call through termination obligations, accessibility proofs, and kernel admission. |
+| [Rewrite rules](rewrite-rules/README.md) | [Lesson 1](rewrite-rules/L01_Conversion.v) | Extend conversion, trace native rule admission, and study the conditions behind confluence and type preservation. |
 
 Each study has its own `_CoqProject`, namespace, and build script. This lets future studies choose the dependencies and compiler flags they need. Shared helpers can be introduced when multiple studies actually use them.
 
@@ -17,11 +18,15 @@ rocq/
 ├── _build/
 └── rocq-studies/
     ├── README.md
-    └── termination/
+    ├── termination/
+    │   ├── _CoqProject
+    │   ├── check.py
+    │   ├── Euclid.v
+    │   └── L01_Baseline.v … L04_Admission.v
+    └── rewrite-rules/
         ├── _CoqProject
         ├── check.py
-        ├── Euclid.v
-        └── L01_Baseline.v … L04_Admission.v
+        └── L01_Conversion.v … L05_Triangle.v
 ```
 
 From this repository's root, build the termination study with:
@@ -30,4 +35,10 @@ From this repository's root, build the termination study with:
 python3 termination/check.py
 ```
 
-The script uses the surrounding checkout's compiler and Corelib, records its version and source commit, and writes results into the study's `logs/` directory. The [termination guide](termination/README.md) gives editor setup, the reading order, and references pinned to the Rocq commit studied.
+Build the rewrite-rule study with:
+
+```sh
+python3 rewrite-rules/check.py
+```
+
+Each script uses the surrounding checkout's compiler and Corelib, records its version and source commit, and writes results into that study's `logs/` directory. The [termination guide](termination/README.md) and [rewrite-rule guide](rewrite-rules/README.md) give editor setup, the reading order, and references pinned to the Rocq commit studied.

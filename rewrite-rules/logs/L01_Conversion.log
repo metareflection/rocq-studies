@@ -1,0 +1,72 @@
+$ /Users/namin/code/eric/rocq/_build/install/default/bin/rocq compile -q -boot -test-mode -R ../../_build/default/theories/Corelib Corelib -Q . RewriteStudy -allow-rewrite-rules L01_Conversion.v
+Guard Checking is on
+Universe Checking is on
+add =
+fix add (n m : nat) {struct n} : nat :=
+  match n with
+  | 0 => m
+  | S p => S (add p m)
+  end
+     : nat -> nat -> nat
+
+Arguments add (n m)%_nat_scope
+     = fun n : nat => n
+     : nat -> nat
+     = fun n : nat => n + 0
+     : nat -> nat
+File "./L01_Conversion.v", line 29, characters 11-18:
+The command has indeed failed with message:
+In environment
+n : nat
+The term "eq_refl" has type "n + 0 = n + 0" while it is expected to have type
+ "n + 0 = n"
+(cannot unify "n + 0" and "n").
+File "./L01_Conversion.v", line 46, characters 11-18:
+The command has indeed failed with message:
+In environment
+n : nat
+The term "eq_refl" has type "n + 0 = n + 0" while it is expected to have type
+ "n + 0 = n"
+(cannot unify "n + 0" and "n").
+pplus
+     : nat -> nat -> nat
+*** [ pplus : nat -> nat -> nat ]
+
+Arguments pplus (_ _)%_nat_scope
+File "./L01_Conversion.v", line 55, characters 11-18:
+The command has indeed failed with message:
+In environment
+n : nat
+The term "eq_refl" has type "pplus n 0 = pplus n 0"
+while it is expected to have type "pplus n 0 = n" (cannot unify 
+"pplus n 0" and "n").
+     = fun n : nat => n
+     : nat -> nat
+     = fun n m : nat => S (S (pplus n m))
+     : nat -> nat -> nat
+File "./L01_Conversion.v", line 87, characters 27-28:
+The command has indeed failed with message:
+In environment
+P : nat -> Type
+n : nat
+x : P (n + 0)
+The term "x" has type "P (n + 0)" while it is expected to have type "P n".
+native_right_zero =
+fun n : nat => eq_refl
+     : forall n : nat, pplus n 0 = n
+
+Arguments native_right_zero n%_nat_scope
+native_reindex =
+fun (P : nat -> Type) (n : nat) (x : P (pplus n 0)) => x
+     : forall (P : nat -> Type) (n : nat), P (pplus n 0) -> P n
+
+Arguments native_reindex P%_function_scope n%_nat_scope x
+Theory:
+Rewrite rules are allowed (subject reduction might be broken)
+Axioms:
+pplus : nat -> nat -> nat
+Theory:
+Rewrite rules are allowed (subject reduction might be broken)
+
+[exit 0]
+

@@ -1,0 +1,39 @@
+$ /Users/namin/code/eric/rocq/_build/install/default/bin/rocq compile -q -boot -test-mode -R ../../_build/default/theories/Corelib Corelib -Q . RewriteStudy L05_Triangle.v
+confluence_via_triangle =
+fun (A : Type) (R P : A -> A -> Prop) (rho : A -> A)
+  (include : forall x y : A, R x y -> P x y)
+  (simulate : forall x y : A, P x y -> steps R x y)
+  (Htriangle : triangle P rho) =>
+(fun (t u v : A) (Htu : steps R t u) (Htv : steps R t v) =>
+ let lift_R : forall x y : A, R x y -> steps P x y :=
+   fun (x y : A) (Hxy : R x y) => steps_cons (include x y Hxy) (steps_refl y)
+   in
+ let HtuP : steps P t u := steps_simulation R P lift_R t u Htu in
+ let HtvP : steps P t v := steps_simulation R P lift_R t v Htv in
+ let e : exists w : A, steps P u w /\ steps P v w :=
+   diamond_confluent P (triangle_diamond P rho Htriangle) t u v HtuP HtvP in
+ match e with
+ | ex_intro _ x x0 =>
+     (fun (w : A) (H : steps P u w /\ steps P v w) =>
+      match H with
+      | conj x1 x2 =>
+          (fun (Huw : steps P u w) (Hvw : steps P v w) =>
+           ex_intro (fun w0 : A => steps R u w0 /\ steps R v w0) w
+             (conj (steps_simulation P R simulate u w Huw)
+                (steps_simulation P R simulate v w Hvw)))
+            x1 x2
+      end) x x0
+ end)
+:
+confluent R
+     : forall {A : Type} (R P : A -> A -> Prop) (rho : A -> A),
+       (forall x y : A, R x y -> P x y) ->
+       (forall x y : A, P x y -> steps R x y) ->
+       triangle P rho -> confluent R
+
+Arguments confluence_via_triangle {A}%_type_scope
+  (R P rho _ _)%_function_scope _ t u v _ _
+Closed under the global context
+
+[exit 0]
+

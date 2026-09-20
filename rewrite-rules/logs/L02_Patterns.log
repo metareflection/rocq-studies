@@ -1,0 +1,33 @@
+$ /Users/namin/code/eric/rocq/_build/install/default/bin/rocq compile -q -boot -test-mode -R ../../_build/default/theories/Corelib Corelib -Q . RewriteStudy -allow-rewrite-rules L02_Patterns.v
+File "./L02_Patterns.v", line 20, characters 35-55:
+The command has indeed failed with message:
+Subterm not recognised as pattern: ordinary_identity
+File "./L02_Patterns.v", line 24, characters 36-40:
+The command has indeed failed with message:
+Head head-pattern is not a symbol.
+     = peel 0
+     : nat
+File "./L02_Patterns.v", line 35, characters 42-49:
+The command has indeed failed with message:
+The term "eq_refl" has type "peel 0 = peel 0"
+while it is expected to have type "peel 0 = 0" (cannot unify 
+"peel 0" and "0").
+File "./L02_Patterns.v", line 41, characters 31-43:
+The command has indeed failed with message:
+Variable ?n is bound multiple times in the pattern (holes number 1 and 2).
+File "./L02_Patterns.v", line 45, characters 48-56:
+Warning: This rewrite rule breaks subject reduction
+(the replacement term doesn't have the type of the pattern).
+Unknown existential variable. [rewrite-rules-break-SR,rewrite-rules,default]
+File "./L02_Patterns.v", line 45, characters 48-56:
+The command has indeed failed with message:
+Unknown existential variable.
+File "./L02_Patterns.v", line 57, characters 38-53:
+The command has indeed failed with message:
+Subterm not recognised as pattern: ?f
+File "./L02_Patterns.v", line 62, characters 2-49:
+The command has indeed failed with message:
+Adding rewrite rules not supported in sections.
+
+[exit 0]
+

@@ -1,0 +1,10 @@
+-arg -q
+-arg -boot
+-arg -allow-rewrite-rules
+-R ../../_build/default/theories/Corelib Corelib
+-Q . RewriteStudy
+L01_Conversion.v
+L02_Patterns.v
+L03_Admission.v
+L04_Boundaries.v
+L05_Triangle.v
