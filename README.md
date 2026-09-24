@@ -42,3 +42,19 @@ python3 rewrite-rules/check.py
 ```
 
 Each script uses the surrounding checkout's compiler and Corelib, records its version and source commit, and writes results into that study's `logs/` directory. The [termination guide](termination/README.md) and [rewrite-rule guide](rewrite-rules/README.md) give editor setup, the reading order, and references pinned to the Rocq commit studied.
+
+## Rendering with Alectryon
+
+[Alectryon](https://github.com/cpitclaudel/alectryon) turns each study file into a webpage that shows every command's goals and output, including `Fail` diagnostics. It gets them from a [VsRocq](https://github.com/rocq-prover/vsrocq) language server built against the surrounding checkout, so the pages show this checkout's behaviour. The opam-packaged server cannot load this checkout's `.vo` files. Set up once, which installs both tools under the ignored `.tools/` folder:
+
+```sh
+python3 render.py --setup
+```
+
+Rerun setup after rebuilding the checkout. Then compile the studies and render them into the ignored `site/` folder:
+
+```sh
+python3 termination/check.py && python3 rewrite-rules/check.py
+python3 render.py            # or: python3 render.py termination
+open site/index.html
+```

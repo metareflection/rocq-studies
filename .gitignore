@@ -6,3 +6,5 @@
 .lia.cache
 .coq-native/
 __pycache__/
+.tools/
+site/
