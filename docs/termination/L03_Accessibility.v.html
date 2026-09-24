@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html class="alectryon-standalone"><head><title>L03_Accessibility.v</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta content="Alectryon" name="generator"><link href="alectryon.css" rel="stylesheet"><link href="pygments.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/IBM-type/0.5.4/css/ibm-type.min.css" integrity="sha512-sky5cf9Ts6FY1kstGOBHSybfKqdHR41M0Ldb0BjNiv3ifltoQIsg0zIaQ+wwdwgQ0w9vKFW7Js50lxH9vqNSSw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/firacode/5.2.0/fira_code.min.css" integrity="sha512-MbysAYimH1hH2xYzkkMHB6MqxBqfP0megxsCLknbYqHVwXTCg9IqHbk+ZP/vnhO8UEW6PaXAkKe2vQ+SWACxxA==" crossorigin="anonymous" /><script src="alectryon.js"></script></head><body><article class="alectryon-root alectryon-centered"><div class="alectryon-banner">Built with <a href="https://github.com/cpitclaudel/alectryon/">Alectryon</a>, running vsrocq-language-server v9.4+alpha 5.4.1 / 2.5.0. Bubbles (<span class="alectryon-bubble"></span>) indicate interactive fragments: hover for details, tap to reveal contents. Use <kbd>Ctrl+↑</kbd> <kbd>Ctrl+↓</kbd> to navigate, <kbd>Ctrl+🖱️</kbd> to focus. On Mac, use <kbd>⌘</kbd> instead of <kbd>Ctrl</kbd>.</div><pre class="alectryon-io highlight"><!-- Generator: Alectryon --><span class="alectryon-txt"><span class="sd">(** Lesson 3 -- The structural argument is a proof. (About 30 minutes.)</span>
+
+<span class="sd">    Read after L02_Obligations.v. Keep the Preterm output nearby.</span>
+<span class="sd">    We inspect the actual Corelib recursor used in that term and build</span>
+<span class="sd">    the evidence package for the same [then] call, one piece at a time.</span>
+<span class="sd">*)</span>
+
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">From</span> Corelib <span class="kn">Require Import</span> Init.Nat Program.Wf.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">From</span> TerminationStudy <span class="kn">Require Import</span> Euclid.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> Guard Checking.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> <span class="kn">Universe</span> <span class="nf">Checking</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Read [Acc R x] as: from [x], every [R]-smaller state is accessible.</span>
+<span class="sd">    The constructor holds a function producing the child proofs.</span>
+<span class="sd">    The orientation is [R child parent]. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chk0" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chk0"><span class="kn">Print</span> Acc.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="kn">Inductive</span> <span class="nf">Acc</span> (<span class="nv">A</span> : <span class="kt">Type</span>) (<span class="nv">R</span> : A -&gt; A -&gt; <span class="kt">Prop</span>) (<span class="nv">x</span> : A) : <span class="kt">Prop</span> :=
+    Acc_intro : (<span class="k">forall</span> <span class="nv">y</span> : A, R y x -&gt; Acc R y) -&gt; Acc R x.
+
+<span class="kn">Arguments</span> Acc [A]%_type_scope R%_function_scope x
+<span class="kn">Arguments</span> Acc_intro [A]%_type_scope [R]%_function_scope x _%_function_scope</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chk1" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chk1"><span class="kn">Print</span> Acc_inv.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Acc_inv =
+<span class="k">fun</span> (<span class="nv">A</span> : <span class="kt">Type</span>) (<span class="nv">R</span> : A -&gt; A -&gt; <span class="kt">Prop</span>) (<span class="nv">x</span> : A) (<span class="nv">H</span> : Acc R x) =&gt;
+<span class="k">match</span> H <span class="k">with</span>
+| Acc_intro _ x0 =&gt; (<span class="k">fun</span> <span class="nv">H0</span> : <span class="k">forall</span> <span class="nv">y</span> : A, R y x -&gt; Acc R y =&gt; H0) x0
+<span class="k">end</span>
+     : <span class="k">forall</span> [A : <span class="kt">Type</span>] [R : A -&gt; A -&gt; <span class="kt">Prop</span>] [x : A],
+       Acc R x -&gt; <span class="k">forall</span> [y : A], R y x -&gt; Acc R y
+
+<span class="kn">Arguments</span> Acc_inv [A]%_type_scope [R]%_function_scope 
+  [x] _ [y] _, [_] [_] [_] _ _ _</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chk2" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chk2"><span class="kn">Print</span> well_founded.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">well_founded =
+<span class="k">fun</span> (<span class="nv">A</span> : <span class="kt">Type</span>) (<span class="nv">R</span> : A -&gt; A -&gt; <span class="kt">Prop</span>) =&gt; <span class="k">forall</span> <span class="nv">a</span> : A, Acc R a
+     : <span class="k">forall</span> [A : <span class="kt">Type</span>], (A -&gt; A -&gt; <span class="kt">Prop</span>) -&gt; <span class="kt">Prop</span>
+
+<span class="kn">Arguments</span> well_founded [A]%_type_scope R%_function_scope</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** [well_founded R] supplies [Acc R x] for EVERY starting state [x].</span>
+<span class="sd">    A decrease proof establishes one edge. Well-foundedness supplies</span>
+<span class="sd">    the accessibility proof with which the recursion starts.</span>
+
+<span class="sd">    Program packs our two inputs in a dependent pair [sigT], even though</span>
+<span class="sd">    the second input's type is simply [nat]. This is the same shape as</span>
+<span class="sd">    Lesson 2's [recarg : {a : nat &amp; nat}]. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">State</span> : <span class="kt">Type</span> := {a : nat &amp; nat}.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">pack</span> (<span class="nv">a</span> <span class="nv">b</span> : nat) : State := existT (<span class="k">fun</span> <span class="nv">_</span> : nat =&gt; nat) a b.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">weight</span> (<span class="nv">x</span> : State) : nat := projT1 x + projT2 x.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">smaller</span> (<span class="nv">child</span> <span class="nv">parent</span> : State) : <span class="kt">Prop</span> :=
+  weight child &lt; weight parent.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chk3" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chk3"><span class="kn">Example</span> <span class="nf">relation_is_the_measure_relation</span> :
+  smaller = @MR State nat lt weight.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">smaller = MR lt weight</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chk4" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chk4"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">smaller = MR lt weight</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">reflexivity</span>.</span><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Spell out the [then] call from parent (S a', S b'). The inner</span>
+<span class="sd">    [existT] packages its two numbers. The outer [exist] packages that</span>
+<span class="sd">    state WITH its decrease proof. These are different jobs. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">right_call</span> (<span class="nv">a'</span> <span class="nv">b'</span> : nat) :
+  {child : State | smaller child (pack (S a') (S b'))} :=
+  exist _ (pack (S a') (S b' - S a'))
+    (TerminationFacts.subtract_right_decreases a' b').</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chk5" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chk5"><span class="kn">Check</span> right_call.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">right_call
+     : <span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat,
+       {child : State | smaller child (pack (S a') (S b'))}</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chk6" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chk6"><span class="kn">Compute</span> (proj1_sig (right_call <span class="mi">17</span> <span class="mi">47</span>)).</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= existT (<span class="k">fun</span> <span class="nv">_</span> : nat =&gt; nat) <span class="mi">18</span> <span class="mi">30</span>
+: State</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt"><span class="c">(* The state (18,48) calls (18,30); its measure goes from 66 to 48. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chk7" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chk7"><span class="kn">Compute</span> (weight (pack <span class="mi">18</span> <span class="mi">48</span>)).</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= <span class="mi">66</span>
+: nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chk8" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chk8"><span class="kn">Compute</span> (weight (proj1_sig (right_call <span class="mi">17</span> <span class="mi">47</span>))).</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= <span class="mi">48</span>
+: nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** A spelling of the same global justification as obligation 4. No</span>
+<span class="sd">    new arithmetic proof is needed: lift well-founded [lt] along weight. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">states_accessible</span> : well_founded smaller :=
+  @measure_wf State nat lt TerminationFacts.nat_lt_wf weight.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** The critical connection: use the EXACT proof carried by this call</span>
+<span class="sd">    to obtain an accessibility proof for its EXACT next state. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">right_child_accessible</span> (<span class="nv">a'</span> <span class="nv">b'</span> : nat)
+    (<span class="nv">parent_proof</span> : Acc smaller (pack (S a') (S b'))) :
+    Acc smaller (proj1_sig (right_call a' b')) :=
+  Acc_inv parent_proof (proj2_sig (right_call a' b')).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chk9" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chk9"><span class="kn">Check</span> right_child_accessible.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">right_child_accessible
+     : <span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat,
+       Acc smaller (pack (S a') (S b')) -&gt;
+       Acc smaller (proj1_sig (right_call a' b'))</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chka" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chka"><span class="kn">Print Assumptions</span> right_child_accessible.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Fetching opaque proofs <span class="kn">from</span> disk <span class="k">for</span> Corelib.Init.Peano</blockquote><blockquote class="alectryon-message">Closed <span class="nb">under</span> the <span class="kn">global</span> <span class="kp">context</span></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chkb" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chkb"><span class="kn">Print Assumptions</span> states_accessible.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Closed <span class="nb">under</span> the <span class="kn">global</span> <span class="kp">context</span></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Now inspect the library definitions, rather than guessing which</span>
+<span class="sd">    recursor Program uses. Look for [{struct r}] in [Fix_F_sub]. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chkc" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chkc"><span class="kn">Print</span> Corelib.Program.Wf.Fix_sub.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Fix_sub =
+<span class="k">fun</span> (<span class="nv">A</span> : <span class="kt">Type</span>) (<span class="nv">R</span> : A -&gt; A -&gt; <span class="kt">Prop</span>) (<span class="nv">Rwf</span> : well_founded R) 
+  (<span class="nv">P</span> : A -&gt; <span class="kt">Type</span>)
+  (<span class="nv">F_sub</span> : <span class="k">forall</span> <span class="nv">x</span> : A, (<span class="k">forall</span> <span class="nv">y</span> : {y : A | R y x}, P (proj1_sig y)) -&gt; P x)
+  (<span class="nv">x</span> : A) =&gt;
+Fix_F_sub A R P F_sub x (Rwf x)
+     : <span class="k">forall</span> (<span class="nv">A</span> : <span class="kt">Type</span>) (<span class="nv">R</span> : A -&gt; A -&gt; <span class="kt">Prop</span>),
+       well_founded R -&gt;
+       <span class="k">forall</span> <span class="nv">P</span> : A -&gt; <span class="kt">Type</span>,
+       (<span class="k">forall</span> <span class="nv">x</span> : A, (<span class="k">forall</span> <span class="nv">y</span> : {y : A | R y x}, P (proj1_sig y)) -&gt; P x) -&gt;
+       <span class="k">forall</span> <span class="nv">x</span> : A, P x
+
+<span class="kn">Arguments</span> Fix_sub A%_type_scope R%_function_scope 
+  Rwf (P F_sub)%_function_scope x</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chkd" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chkd"><span class="kn">Print</span> Corelib.Program.Wf.Fix_F_sub.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Fix_F_sub =
+<span class="k">fun</span> (<span class="nv">A</span> : <span class="kt">Type</span>) (<span class="nv">R</span> : A -&gt; A -&gt; <span class="kt">Prop</span>) (<span class="nv">P</span> : A -&gt; <span class="kt">Type</span>)
+  (<span class="nv">F_sub</span> : <span class="k">forall</span> <span class="nv">x</span> : A, (<span class="k">forall</span> <span class="nv">y</span> : {y : A | R y x}, P (proj1_sig y)) -&gt; P x) =&gt;
+<span class="k">fix</span> Fix_F_sub (x : A) (r : Acc R x) {<span class="k">struct</span> r} : P x :=
+  F_sub x
+    (<span class="k">fun</span> <span class="nv">y</span> : {y : A | R y x} =&gt;
+     Fix_F_sub (proj1_sig y) (Acc_inv r (proj2_sig y)))
+     : <span class="k">forall</span> (<span class="nv">A</span> : <span class="kt">Type</span>) (<span class="nv">R</span> : A -&gt; A -&gt; <span class="kt">Prop</span>) (<span class="nv">P</span> : A -&gt; <span class="kt">Type</span>),
+       (<span class="k">forall</span> <span class="nv">x</span> : A, (<span class="k">forall</span> <span class="nv">y</span> : {y : A | R y x}, P (proj1_sig y)) -&gt; P x) -&gt;
+       <span class="k">forall</span> <span class="nv">x</span> : A, Acc R x -&gt; P x
+
+<span class="kn">Arguments</span> Fix_F_sub A%_type_scope (R P F_sub)%_function_scope x r</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** At [theories/Corelib/Program/Wf.v:27] the recursive call is:</span>
+
+<span class="sd">      Fix_F_sub (proj1_sig y) (Acc_inv r (proj2_sig y))</span>
+
+<span class="sd">    Unfold [Acc_inv]: matching [r = Acc_intro ... children] exposes</span>
+<span class="sd">    [children], and [children child decrease] is a structurally smaller</span>
+<span class="sd">    accessibility proof. The state itself need not be a syntactic</span>
+<span class="sd">    subterm. The existing guard checker recognizes this recursion on [r].</span>
+
+<span class="sd">    The following equality checks one actual unfolding of the library</span>
+<span class="sd">    recursor. Section variables become explicit parameters on closing</span>
+<span class="sd">    the section; they introduce no global axioms. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Section</span> <span class="nf">OneUnfolding</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Variable</span> <span class="nv">A</span> : <span class="kt">Type</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Variable</span> <span class="nv">R</span> : A -&gt; A -&gt; <span class="kt">Prop</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Variable</span> <span class="nv">P</span> : A -&gt; <span class="kt">Type</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Variable</span> <span class="nv">body</span> : <span class="k">forall</span> <span class="nv">x</span> : A,
+    (<span class="k">forall</span> <span class="nv">y</span> : {child : A | R child x}, P (proj1_sig y)) -&gt; P x.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chke" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chke"><span class="kn">Example</span> <span class="nf">recursor_on_constructor</span> (<span class="nv">x</span> : A)
+      (<span class="nv">children</span> : <span class="k">forall</span> <span class="nv">child</span>, R child x -&gt; Acc R child) :
+    Fix_F_sub A R P body x (Acc_intro x children) =
+    body x (<span class="k">fun</span> <span class="nv">y</span> =&gt;
+      Fix_F_sub A R P body (proj1_sig y)
+        (children (proj1_sig y) (proj2_sig y))).</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>A</var><span class="hyp-type"><b>: </b><span><span class="kt">Type</span></span></span></span><br><span><var>R</var><span class="hyp-type"><b>: </b><span>A -&gt; A -&gt; <span class="kt">Prop</span></span></span></span><br><span><var>P</var><span class="hyp-type"><b>: </b><span>A -&gt; <span class="kt">Type</span></span></span></span><br><span><var>body</var><span class="hyp-type"><b>: </b><span><span class="k">forall</span> <span class="nv">x</span> : A, (<span class="k">forall</span> <span class="nv">y</span> : {child : A | R child x}, P (proj1_sig y)) -&gt; P x</span></span></span><br><span><var>x</var><span class="hyp-type"><b>: </b><span>A</span></span></span><br><span><var>children</var><span class="hyp-type"><b>: </b><span><span class="k">forall</span> <span class="nv">child</span> : A, R child x -&gt; Acc R child</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">Fix_F_sub A R P body x (Acc_intro x children) =
+body x
+  (<span class="k">fun</span> <span class="nv">y</span> : {child : A | R child x} =&gt;
+   Fix_F_sub A R P body (proj1_sig y) (children (proj1_sig y) (proj2_sig y)))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chkf" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chkf"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>A</var><span class="hyp-type"><b>: </b><span><span class="kt">Type</span></span></span></span><br><span><var>R</var><span class="hyp-type"><b>: </b><span>A -&gt; A -&gt; <span class="kt">Prop</span></span></span></span><br><span><var>P</var><span class="hyp-type"><b>: </b><span>A -&gt; <span class="kt">Type</span></span></span></span><br><span><var>body</var><span class="hyp-type"><b>: </b><span><span class="k">forall</span> <span class="nv">x</span> : A, (<span class="k">forall</span> <span class="nv">y</span> : {child : A | R child x}, P (proj1_sig y)) -&gt; P x</span></span></span><br><span><var>x</var><span class="hyp-type"><b>: </b><span>A</span></span></span><br><span><var>children</var><span class="hyp-type"><b>: </b><span><span class="k">forall</span> <span class="nv">child</span> : A, R child x -&gt; Acc R child</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">Fix_F_sub A R P body x (Acc_intro x children) =
+body x
+  (<span class="k">fun</span> <span class="nv">y</span> : {child : A | R child x} =&gt;
+   Fix_F_sub A R P body (proj1_sig y) (children (proj1_sig y) (proj2_sig y)))</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">reflexivity</span>.</span><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">End</span> <span class="nf">OneUnfolding</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chk10" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chk10"><span class="kn">Print Assumptions</span> recursor_on_constructor.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Closed <span class="nb">under</span> the <span class="kn">global</span> <span class="kp">context</span></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** [Acc] lives in Prop, but its singleton-elimination permission allows</span>
+<span class="sd">    this recursion to return values in Type (here, nat). Inspect the</span>
+<span class="sd">    actual generated eliminator; an arbitrary proposition does not</span>
+<span class="sd">    enjoy this permission. [Init/Wf.v:31] documents this point. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Accessibility-v-chk11" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Accessibility-v-chk11"><span class="kn">Check</span> Acc_rect.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Acc_rect
+     : <span class="k">forall</span> (<span class="nv">A</span> : <span class="kt">Type</span>) (<span class="nv">R</span> : A -&gt; A -&gt; <span class="kt">Prop</span>) (<span class="nv">P</span> : A -&gt; <span class="kt">Type</span>),
+       (<span class="k">forall</span> <span class="nv">x</span> : A,
+        (<span class="k">forall</span> <span class="nv">y</span> : A, R y x -&gt; Acc R y) -&gt;
+        (<span class="k">forall</span> <span class="nv">y</span> : A, R y x -&gt; P y) -&gt; P x) -&gt;
+       <span class="k">forall</span> <span class="nv">x</span> : A, Acc R x -&gt; P x</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Checkpoint:</span>
+
+<span class="sd">    1. Identify the two projections from [right_call]: state and proof.</span>
+<span class="sd">    2. What supplies the initial [r]? What supplies the child's [r]?</span>
+<span class="sd">    3. Is [a + b] the structural argument of [Fix_F_sub]?</span>
+<span class="sd">    4. Did proving the decrease replace the guard checker?</span>
+
+<span class="sd">    Answer cues: [proj1_sig]/[proj2_sig]; well-foundedness/[Acc_inv];</span>
+<span class="sd">    no, [r] is the structural argument; no, the evidence enables a</span>
+<span class="sd">    construction accepted by that checker.</span>
+
+<span class="sd">    This is not yet an opacity experiment: the one-step equality above</span>
+<span class="sd">    explicitly provides a visible [Acc_intro]. We have not established</span>
+<span class="sd">    which opaque proofs would block a particular reduction strategy.</span>
+
+<span class="sd">    Next: L04_Admission.v -- connect these pieces to the installed term.</span>
+<span class="sd">*)</span>
+</span></pre></article></body></html>

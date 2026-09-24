@@ -5,7 +5,7 @@ Goals and messages come from a VsRocq language server built against the
 surrounding checkout, so the pages show this checkout's behaviour.
 
     python3 render.py --setup   # once: install Alectryon, build VsRocq
-    python3 render.py           # render into site/
+    python3 render.py           # render into docs/ (served by GitHub Pages)
 """
 
 import argparse
@@ -25,7 +25,8 @@ VENV = TOOLS / "venv"
 VSROCQ = TOOLS / "vsrocq"
 ALECTRYON = VENV / "bin/alectryon"
 VSROCQTOP = VSROCQ / "language-server/_build/install/default/bin/vsrocqtop"
-SITE = REPO / "site"
+SITE = REPO / "docs"
+DOMAIN = "rocq-studies.metareflection.club"
 
 ALECTRYON_URL = "https://github.com/cpitclaudel/alectryon"
 ALECTRYON_REV = "a6f19454a4a8756c51c6c4413544ad09d188e006"
@@ -104,6 +105,8 @@ def write_index(index):
         "<!DOCTYPE html><meta charset='utf-8'><title>Rocq studies</title>"
         "<body style='font-family:sans-serif;max-width:40em;margin:2em auto'>"
         "<h1>Rocq studies</h1>" + "".join(items) + "</body>\n")
+    SITE.joinpath("CNAME").write_text(DOMAIN + "\n")
+    SITE.joinpath(".nojekyll").write_text("")
 
 
 def main():
@@ -111,7 +114,7 @@ def main():
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--setup", action="store_true",
                         help="install Alectryon and build VsRocq against this checkout")
-    parser.add_argument("--clean", action="store_true", help="remove site/ first")
+    parser.add_argument("--clean", action="store_true", help="remove docs/ first")
     parser.add_argument("studies", nargs="*", help="study folders to render (default: all)")
     args = parser.parse_args()
     if args.setup:

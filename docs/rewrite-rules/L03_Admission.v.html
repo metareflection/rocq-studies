@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html class="alectryon-standalone"><head><title>L03_Admission.v</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta content="Alectryon" name="generator"><link href="alectryon.css" rel="stylesheet"><link href="pygments.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/IBM-type/0.5.4/css/ibm-type.min.css" integrity="sha512-sky5cf9Ts6FY1kstGOBHSybfKqdHR41M0Ldb0BjNiv3ifltoQIsg0zIaQ+wwdwgQ0w9vKFW7Js50lxH9vqNSSw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/firacode/5.2.0/fira_code.min.css" integrity="sha512-MbysAYimH1hH2xYzkkMHB6MqxBqfP0megxsCLknbYqHVwXTCg9IqHbk+ZP/vnhO8UEW6PaXAkKe2vQ+SWACxxA==" crossorigin="anonymous" /><script src="alectryon.js"></script></head><body><article class="alectryon-root alectryon-centered"><div class="alectryon-banner">Built with <a href="https://github.com/cpitclaudel/alectryon/">Alectryon</a>, running vsrocq-language-server v9.4+alpha 5.4.1 / 2.5.0. Bubbles (<span class="alectryon-bubble"></span>) indicate interactive fragments: hover for details, tap to reveal contents. Use <kbd>Ctrl+↑</kbd> <kbd>Ctrl+↓</kbd> to navigate, <kbd>Ctrl+🖱️</kbd> to focus. On Mac, use <kbd>⌘</kbd> instead of <kbd>Ctrl</kbd>.</div><pre class="alectryon-io highlight"><!-- Generator: Alectryon --><span class="alectryon-txt"><span class="sd">(** Lesson 3 -- Follow one rule from declaration to conversion.</span>
+<span class="sd">    (~25 minutes, with the source map in README.md open.)</span>
+
+<span class="sd">    First build [L01_Conversion.v]. This file is an importing client:</span>
+<span class="sd">    its conversion examples use the rules saved with that module.</span>
+<span class="sd">    It does not replay Lesson 1's proof scripts or rule declarations.</span>
+<span class="sd">*)</span>
+
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">From</span> RewriteStudy <span class="kn">Require Import</span> L01_Conversion.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> Guard Checking.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> <span class="kn">Universe</span> <span class="nf">Checking</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Admission-v-chk0" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Admission-v-chk0"><span class="kn">Test</span> Guard Checking.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Guard Checking <span class="k">is</span> on</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Admission-v-chk1" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Admission-v-chk1"><span class="kn">Test</span> <span class="kn">Universe</span> <span class="nf">Checking</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="kn">Universe</span> <span class="nf">Checking</span> <span class="k">is</span> on</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Admission-v-chk2" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Admission-v-chk2"><span class="kn">Check</span> pplus.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">pplus
+     : nat -&gt; nat -&gt; nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Admission-v-chk3" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Admission-v-chk3"><span class="kn">Print</span> pplus.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">*** [ pplus : nat -&gt; nat -&gt; nat ]
+
+<span class="kn">Arguments</span> pplus (_ _)%_nat_scope</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Admission-v-chk4" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Admission-v-chk4"><span class="kn">Print</span> native_right_zero.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">native_right_zero =
+<span class="k">fun</span> <span class="nv">n</span> : nat =&gt; eq_refl
+     : <span class="k">forall</span> <span class="nv">n</span> : nat, pplus n <span class="mi">0</span> = n
+
+<span class="kn">Arguments</span> native_right_zero n%_nat_scope</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** A rule block has a name, but it is not an equality-proof constant.</span>
+<span class="sd">    The [Print] diagnostic is an observation about this interface, not</span>
+<span class="sd">    the entire argument that no metatheoretic evidence was checked. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Admission-v-chk5" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Admission-v-chk5"><span class="kn">Fail</span> <span class="kn">Check</span> pplus_rules.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+The reference pplus_rules was not found <span class="k">in</span> the current environment.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Admission-v-chk6" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Admission-v-chk6"><span class="kn">Fail</span> <span class="kn">Print</span> pplus_rules.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+pplus_rules not a defined object.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">imported_computation</span> : <span class="k">forall</span> <span class="nv">n</span>, pplus n <span class="mi">0</span> = n :=
+  <span class="k">fun</span> <span class="nv">n</span> =&gt; eq_refl.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">imported_reindex</span> (<span class="nv">P</span> : nat -&gt; <span class="kt">Type</span>) (<span class="nv">n</span> : nat)
+  (<span class="nv">x</span> : P (pplus n <span class="mi">0</span>)) : P n := x.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Admission-v-chk7" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Admission-v-chk7"><span class="kn">Print</span> imported_computation.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">imported_computation =
+<span class="k">fun</span> <span class="nv">n</span> : nat =&gt; eq_refl
+     : <span class="k">forall</span> <span class="nv">n</span> : nat, pplus n <span class="mi">0</span> = n
+
+<span class="kn">Arguments</span> imported_computation n%_nat_scope</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Admission-v-chk8" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Admission-v-chk8"><span class="kn">Print</span> imported_reindex.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">imported_reindex =
+<span class="k">fun</span> (<span class="nv">P</span> : nat -&gt; <span class="kt">Type</span>) (<span class="nv">n</span> : nat) (<span class="nv">x</span> : P (pplus n <span class="mi">0</span>)) =&gt; x
+     : <span class="k">forall</span> (<span class="nv">P</span> : nat -&gt; <span class="kt">Type</span>) (<span class="nv">n</span> : nat), P (pplus n <span class="mi">0</span>) -&gt; P n
+
+<span class="kn">Arguments</span> imported_reindex P%_function_scope n%_nat_scope x</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L03-Admission-v-chk9" style="display: none" type="checkbox"><label class="alectryon-input" for="L03-Admission-v-chk9"><span class="kn">Print Assumptions</span> imported_computation.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="kn">Axioms</span>:
+pplus : nat -&gt; nat -&gt; nat
+Theory:
+Rewrite rules are allowed (subject reduction might be broken)</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Trace the rule [pplus ?n 0 =&gt; ?n] through these entry points in the</span>
+<span class="sd">    surrounding Rocq source, pinned in README.md:</span>
+
+<span class="sd">    1. [vernac/comRewriteRule.ml], [interp_rule]: elaborate the pattern,</span>
+<span class="sd">       collect holes, check its shape and symbol head; try checking the</span>
+<span class="sd">       replacement against the inferred type. Read the warning/fallback</span>
+<span class="sd">       branch, not just the successful typing branch.</span>
+
+<span class="sd">    2. The same file, [do_rules]: build rule data and call</span>
+<span class="sd">       [Global.add_rewrite_rules]. Follow that wrapper in library/global.ml.</span>
+
+<span class="sd">    3. [kernel/safe_typing.ml], [add_rewrite_rules]: add an [SFBrules]</span>
+<span class="sd">       field; [add_field] passes it to [Environ.add_rewrite_rules].</span>
+
+<span class="sd">    4. [kernel/environ.ml], [add_rewrite_rules]: store the rule under</span>
+<span class="sd">       its symbol. Find the rule's hole count, pattern, and replacement</span>
+<span class="sd">       in the data, rather than looking for an equality proof.</span>
+
+<span class="sd">    5. [kernel/cClosure.ml], [knr]'s Symbol case and</span>
+<span class="sd">       [RedPattern.match_symbol]: match a rule, construct a substitution,</span>
+<span class="sd">       and continue reduction with the instantiated replacement.</span>
+
+<span class="sd">    At the call [pplus n 0], the first hole is instantiated by [n], so</span>
+<span class="sd">    the replacement is [n]. Conversion can therefore accept [eq_refl]</span>
+<span class="sd">    at the type [pplus n 0 = n].</span>
+
+<span class="sd">    This path does not ask for proofs of confluence or termination.</span>
+<span class="sd">    Its current typing attempt is not a guarantee of subject reduction.</span>
+<span class="sd">    Lesson 4 exhibits the distinction without modifying kernel code.</span>
+
+<span class="sd">    Compare Rewster (JAR 2026), section 7: the article distinguishes</span>
+<span class="sd">    native rewrite support from the typing checker proposed in PR</span>
+<span class="sd">    #19290. Its section 9 separately lists implementing the Rocq</span>
+<span class="sd">    confluence checker as future work. These are the article's dated</span>
+<span class="sd">    implementation statements; this source trace establishes what the</span>
+<span class="sd">    particular checkout used by our lessons does.</span>
+<span class="sd">*)</span>
+
+<span class="sd">(** Compare with the termination study (optional prior reading):</span>
+
+<span class="sd">    - Program Fixpoint constructs a term using an existing recursor</span>
+<span class="sd">      and evidence of decrease/accessibility. The core recursive term</span>
+<span class="sd">      satisfies the existing structural check.</span>
+<span class="sd">    - Rewrite Rule registers patterns and replacements consulted by</span>
+<span class="sd">      native reduction. There is no analogous proof parameter in this</span>
+<span class="sd">      declaration interface certifying the whole extended reduction.</span>
+
+<span class="sd">    Successful import shows availability of compiled declarations.</span>
+<span class="sd">    It is not a new proof that their rules have good metaproperties.</span>
+<span class="sd">    [Print Assumptions] reports symbol/theory dependencies; it does not</span>
+<span class="sd">    certify the rewrite system's confluence, termination or consistency.</span>
+
+<span class="sd">    Checkpoint: describe the proposed object, the installed data, where</span>
+<span class="sd">    conversion uses it, and the missing guarantees in your own words.</span>
+
+<span class="sd">    Next: L04_Boundaries.v -- accepted declarations with bad behavior.</span>
+<span class="sd">*)</span>
+</span></pre></article></body></html>

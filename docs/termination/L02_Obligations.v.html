@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html class="alectryon-standalone"><head><title>L02_Obligations.v</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta content="Alectryon" name="generator"><link href="alectryon.css" rel="stylesheet"><link href="pygments.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/IBM-type/0.5.4/css/ibm-type.min.css" integrity="sha512-sky5cf9Ts6FY1kstGOBHSybfKqdHR41M0Ldb0BjNiv3ifltoQIsg0zIaQ+wwdwgQ0w9vKFW7Js50lxH9vqNSSw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/firacode/5.2.0/fira_code.min.css" integrity="sha512-MbysAYimH1hH2xYzkkMHB6MqxBqfP0megxsCLknbYqHVwXTCg9IqHbk+ZP/vnhO8UEW6PaXAkKe2vQ+SWACxxA==" crossorigin="anonymous" /><script src="alectryon.js"></script></head><body><article class="alectryon-root alectryon-centered"><div class="alectryon-banner">Built with <a href="https://github.com/cpitclaudel/alectryon/">Alectryon</a>, running vsrocq-language-server v9.4+alpha 5.4.1 / 2.5.0. Bubbles (<span class="alectryon-bubble"></span>) indicate interactive fragments: hover for details, tap to reveal contents. Use <kbd>Ctrl+↑</kbd> <kbd>Ctrl+↓</kbd> to navigate, <kbd>Ctrl+🖱️</kbd> to focus. On Mac, use <kbd>⌘</kbd> instead of <kbd>Ctrl</kbd>.</div><pre class="alectryon-io highlight"><!-- Generator: Alectryon --><span class="alectryon-txt"><span class="sd">(** Lesson 2 -- Watch a definition become available. (About 30 minutes.)</span>
+
+<span class="sd">    Read after L01_Baseline.v. This is the same Euclid algorithm and</span>
+<span class="sd">    measure, with a fresh name and inspection commands inserted.</span>
+<span class="sd">    Arithmetic evidence is defined in Euclid.v. This begins Phase 2.</span>
+<span class="sd">*)</span>
+
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">From</span> Corelib <span class="kn">Require Import</span> Init.Nat Program.Wf.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">From</span> TerminationStudy <span class="kn">Require Import</span> Euclid.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> Guard Checking.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> <span class="kn">Universe</span> <span class="nf">Checking</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Pause automatic proof search so every obligation stays visible. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input">#[local] <span class="kn">Obligation Tactic</span> := <span class="kp">idtac</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk0" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk0"><span class="kn">Program Fixpoint</span> <span class="nf">euclid_trace</span> (<span class="nv">a</span> <span class="nv">b</span> : nat) {<span class="nv">measure</span> (a + b)} : nat :=
+  <span class="k">match</span> a, b <span class="k">with</span>
+  | <span class="mi">0</span>, _ =&gt; b
+  | _, <span class="mi">0</span> =&gt; a
+  | S a', S b' =&gt;
+      <span class="k">if</span> Nat.leb (S a') (S b')
+      <span class="k">then</span> euclid_trace (S a') (S b' - S a')
+      <span class="k">else</span> euclid_trace (S a' - S b') (S b')
+  <span class="k">end</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace_func has type-checked, generating <span class="mi">4</span> obligations</blockquote><blockquote class="alectryon-message">Solving obligations automatically...</blockquote><blockquote class="alectryon-message"><span class="mi">4</span> obligations remaining</blockquote><blockquote class="alectryon-message">Obligation <span class="mi">1</span> of euclid_trace_func:
+(<span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat,
+ (<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat) -&gt;
+ <span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat, S a' = a -&gt; S b' = b -&gt; S a' + (S b' - S a') &lt; a + b).
+</blockquote><blockquote class="alectryon-message">Obligation <span class="mi">2</span> of euclid_trace_func:
+(<span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat,
+ (<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat) -&gt;
+ <span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat, S a' = a -&gt; S b' = b -&gt; S a' - S b' + S b' &lt; a + b).
+</blockquote><blockquote class="alectryon-message">Obligation <span class="mi">3</span> of euclid_trace_func:
+(<span class="k">forall</span> (<span class="nv">a</span> <span class="nv">b</span> : nat)
+   (<span class="nv">euclid_trace</span> : <span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat),
+ <span class="k">let</span> <span class="nv">program_branch_0</span> :=
+   <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat) (<span class="nv">_</span> : <span class="mi">0</span> = a) (<span class="nv">_</span> : wildcard' = b) =&gt; b <span class="k">in</span>
+ <span class="k">let</span> <span class="nv">program_branch_1</span> :=
+   <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat)
+     (<span class="nv">_</span> : <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>))
+     (<span class="nv">_</span> : wildcard' = a) (<span class="nv">_</span> : <span class="mi">0</span> = b) =&gt;
+   a <span class="k">in</span>
+ <span class="k">let</span> <span class="nv">program_branch_2</span> :=
+   <span class="k">fun</span> (<span class="nv">a'</span> <span class="nv">b'</span> : nat) (<span class="nv">Heq_a</span> : S a' = a) (<span class="nv">Heq_b</span> : S b' = b) =&gt;
+   <span class="k">if</span> S a' &lt;=? S b'
+   <span class="k">then</span>
+    euclid_trace (S a') (S b' - S a')
+      (euclid_trace_func_obligation_1 a b euclid_trace a' b' Heq_a Heq_b)
+   <span class="k">else</span>
+    euclid_trace (S a' - S b') (S b')
+      (euclid_trace_func_obligation_2 a b euclid_trace a' b' Heq_a Heq_b)
+   <span class="k">in</span>
+ <span class="k">forall</span> <span class="nv">n</span> : nat,
+ <span class="k">let</span> <span class="nv">wildcard'</span> := S n <span class="k">in</span>
+ <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>)).
+</blockquote><blockquote class="alectryon-message">Obligation <span class="mi">4</span> of euclid_trace_func:
+(well_founded
+   (MR lt
+      (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+       <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b))).
+</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Before solving anything, inspect the four pending propositions and</span>
+<span class="sd">    the proposed term. The name with [_func] is Program's internal</span>
+<span class="sd">    function on a packed pair of arguments. Search the Preterm output</span>
+<span class="sd">    for [Fix_sub], [existT], [exist], and [_obligation_1].</span>
+
+<span class="sd">    These commands inspect Program's pending state; they do not install</span>
+<span class="sd">    an incomplete function in the global environment. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk1" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk1"><span class="kn">Obligations of</span> <span class="nf">euclid_trace_func</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="mi">4</span> obligation(s) remaining: </blockquote><blockquote class="alectryon-message">Obligation <span class="mi">1</span> of euclid_trace_func:
+(<span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat,
+ (<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat) -&gt;
+ <span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat, S a' = a -&gt; S b' = b -&gt; S a' + (S b' - S a') &lt; a + b).
+</blockquote><blockquote class="alectryon-message">Obligation <span class="mi">2</span> of euclid_trace_func:
+(<span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat,
+ (<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat) -&gt;
+ <span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat, S a' = a -&gt; S b' = b -&gt; S a' - S b' + S b' &lt; a + b).
+</blockquote><blockquote class="alectryon-message">Obligation <span class="mi">3</span> of euclid_trace_func:
+(<span class="k">forall</span> (<span class="nv">a</span> <span class="nv">b</span> : nat)
+   (<span class="nv">euclid_trace</span> : <span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat),
+ <span class="k">let</span> <span class="nv">program_branch_0</span> :=
+   <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat) (<span class="nv">_</span> : <span class="mi">0</span> = a) (<span class="nv">_</span> : wildcard' = b) =&gt; b <span class="k">in</span>
+ <span class="k">let</span> <span class="nv">program_branch_1</span> :=
+   <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat)
+     (<span class="nv">_</span> : <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>))
+     (<span class="nv">_</span> : wildcard' = a) (<span class="nv">_</span> : <span class="mi">0</span> = b) =&gt;
+   a <span class="k">in</span>
+ <span class="k">let</span> <span class="nv">program_branch_2</span> :=
+   <span class="k">fun</span> (<span class="nv">a'</span> <span class="nv">b'</span> : nat) (<span class="nv">Heq_a</span> : S a' = a) (<span class="nv">Heq_b</span> : S b' = b) =&gt;
+   <span class="k">if</span> S a' &lt;=? S b'
+   <span class="k">then</span>
+    euclid_trace (S a') (S b' - S a')
+      (euclid_trace_func_obligation_1 a b euclid_trace a' b' Heq_a Heq_b)
+   <span class="k">else</span>
+    euclid_trace (S a' - S b') (S b')
+      (euclid_trace_func_obligation_2 a b euclid_trace a' b' Heq_a Heq_b)
+   <span class="k">in</span>
+ <span class="k">forall</span> <span class="nv">n</span> : nat,
+ <span class="k">let</span> <span class="nv">wildcard'</span> := S n <span class="k">in</span>
+ <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>)).
+</blockquote><blockquote class="alectryon-message">Obligation <span class="mi">4</span> of euclid_trace_func:
+(well_founded
+   (MR lt
+      (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+       <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b))).
+</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk2" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk2"><span class="kn">Preterm of</span> <span class="nf">euclid_trace_func</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace_func :
+(<span class="k">forall</span> <span class="nv">recarg</span> : {_ : nat &amp; nat},
+ <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> nat)
+:=
+(Fix_sub {_ : nat &amp; nat}
+   (MR lt
+      (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+       <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b))
+   euclid_trace_func_obligation_4
+   (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+    <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> nat)
+   (<span class="k">fun</span> (<span class="nv">recarg</span> : {_ : nat &amp; nat})
+      (<span class="nv">euclid_trace'</span> : <span class="k">forall</span>
+                         <span class="nv">recarg'</span> : {recarg' : {_ : nat &amp; nat}
+                                   | (<span class="k">let</span> <span class="nv">a</span> := projT1 recarg' <span class="k">in</span>
+                                      <span class="k">let</span> <span class="nv">b</span> := projT2 recarg' <span class="k">in</span> a + b) &lt;
+                                     (<span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span>
+                                      <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b)},
+                       <span class="k">let</span> <span class="nv">a</span> := projT1 (proj1_sig recarg') <span class="k">in</span>
+                       <span class="k">let</span> <span class="nv">b</span> := projT2 (proj1_sig recarg') <span class="k">in</span> nat) =&gt;
+    <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span>
+    <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span>
+    <span class="k">let</span> <span class="nv">euclid_trace</span> :=
+      <span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat) (<span class="nv">recproof</span> : a0 + b0 &lt; a + b) =&gt;
+      euclid_trace'
+        (exist
+           (<span class="k">fun</span> <span class="nv">recarg'</span> : {_ : nat &amp; nat} =&gt;
+            (<span class="k">let</span> <span class="nv">a1</span> := projT1 recarg' <span class="k">in</span> <span class="k">let</span> <span class="nv">b1</span> := projT2 recarg' <span class="k">in</span> a1 + b1) &lt;
+            (<span class="k">let</span> <span class="nv">a1</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b1</span> := projT2 recarg <span class="k">in</span> a1 + b1))
+           (existT (<span class="k">fun</span> <span class="nv">_</span> : nat =&gt; nat) a0 b0) recproof)
+      <span class="k">in</span>
+    <span class="k">let</span> <span class="nv">program_branch_0</span> :=
+      <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat) (<span class="nv">_</span> : <span class="mi">0</span> = a) (<span class="nv">_</span> : wildcard' = b) =&gt; b <span class="k">in</span>
+    <span class="k">let</span> <span class="nv">program_branch_1</span> :=
+      <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat)
+        (<span class="nv">_</span> : <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>))
+        (<span class="nv">_</span> : wildcard' = a) (<span class="nv">_</span> : <span class="mi">0</span> = b) =&gt;
+      a <span class="k">in</span>
+    <span class="k">let</span> <span class="nv">program_branch_2</span> :=
+      <span class="k">fun</span> (<span class="nv">a'</span> <span class="nv">b'</span> : nat) (<span class="nv">Heq_a</span> : S a' = a) (<span class="nv">Heq_b</span> : S b' = b) =&gt;
+      <span class="k">if</span> S a' &lt;=? S b'
+      <span class="k">then</span>
+       euclid_trace (S a') (S b' - S a')
+         (euclid_trace_func_obligation_1 a b euclid_trace a' b' Heq_a Heq_b)
+      <span class="k">else</span>
+       euclid_trace (S a' - S b') (S b')
+         (euclid_trace_func_obligation_2 a b euclid_trace a' b' Heq_a Heq_b)
+      <span class="k">in</span>
+    <span class="k">match</span> a <span class="k">as</span> a' <span class="k">return</span> a' = a -&gt; b = b -&gt; nat <span class="k">with</span>
+    | <span class="mi">0</span> =&gt; program_branch_0 b
+    | S a' =&gt;
+        <span class="k">match</span> b <span class="k">as</span> b' <span class="k">return</span> S a' = a -&gt; b' = b -&gt; nat <span class="k">with</span>
+        | <span class="mi">0</span> =&gt;
+            program_branch_1 (S a')
+              (euclid_trace_func_obligation_3 a b euclid_trace a')
+        | S b' =&gt; program_branch_2 a' b'
+        <span class="k">end</span>
+    <span class="k">end</span> eq_refl eq_refl))</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk3" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk3"><span class="kn">Fail</span> <span class="kn">Check</span> euclid_trace.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+The reference euclid_trace was not found <span class="k">in</span> the current environment.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk4" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk4"><span class="kn">Fail</span> <span class="kn">Check</span> euclid_trace_func.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+The reference euclid_trace_func was not found <span class="k">in</span> the current environment.
+Did you mean euclid_sub_func?</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Follow the [then] call. Its local recursive function now takes an</span>
+<span class="sd">    extra proof that the new sum is smaller than the CURRENT sum.</span>
+<span class="sd">    Match equalities identify the current [a,b] with [S a',S b'].</span>
+<span class="sd">    Execute [Show] before and after [subst] and read the change. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk5" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk5"><span class="kn">Next Obligation</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat,
+(<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat) -&gt;
+<span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat, S a' = a -&gt; S b' = b -&gt; S a' + (S b' - S a') &lt; a + b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk6" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk6"><span class="nb">intros</span> a b recurse a' b' Ha Hb.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a, b</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br><span><var>recurse</var><span class="hyp-type"><b>: </b><span><span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat</span></span></span><br><span><var>a', b'</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br><span><var>Ha</var><span class="hyp-type"><b>: </b><span>S a' = a</span></span></span><br><span><var>Hb</var><span class="hyp-type"><b>: </b><span>S b' = b</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">S a' + (S b' - S a') &lt; a + b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk7" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk7"><span class="kn">Show</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="mi">1</span> goal
+
+  a, b : nat
+  recurse : <span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat
+  a', b' : nat
+  Ha : S a' = a
+  Hb : S b' = b
+  ============================
+  S a' + (S b' - S a') &lt; a + b</blockquote></div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a, b</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br><span><var>recurse</var><span class="hyp-type"><b>: </b><span><span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat</span></span></span><br><span><var>a', b'</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br><span><var>Ha</var><span class="hyp-type"><b>: </b><span>S a' = a</span></span></span><br><span><var>Hb</var><span class="hyp-type"><b>: </b><span>S b' = b</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">S a' + (S b' - S a') &lt; a + b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk8" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk8"><span class="nb">subst</span> a b.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a', b'</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br><span><var>recurse</var><span class="hyp-type"><b>: </b><span><span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat, a + b &lt; S a' + S b' -&gt; nat</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">S a' + (S b' - S a') &lt; S a' + S b'</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk9" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk9"><span class="kn">Show</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="mi">1</span> goal
+
+  a', b' : nat
+  recurse : <span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat, a + b &lt; S a' + S b' -&gt; nat
+  ============================
+  S a' + (S b' - S a') &lt; S a' + S b'</blockquote></div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a', b'</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br><span><var>recurse</var><span class="hyp-type"><b>: </b><span><span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat, a + b &lt; S a' + S b' -&gt; nat</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">S a' + (S b' - S a') &lt; S a' + S b'</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><span class="alectryon-input"><span class="nb">apply</span> TerminationFacts.subtract_right_decreases.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chka" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chka"><span class="kn">Defined</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="mi">3</span> obligations remaining</blockquote><blockquote class="alectryon-message">Solving obligations automatically...</blockquote><blockquote class="alectryon-message"><span class="mi">3</span> obligations remaining</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** One evidence constant is now installed, but the function is not. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chkb" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chkb"><span class="kn">Check</span> euclid_trace_func_obligation_1.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace_func_obligation_1
+     : <span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat,
+       (<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat) -&gt;
+       <span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat,
+       S a' = a -&gt; S b' = b -&gt; S a' + (S b' - S a') &lt; a + b</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chkc" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chkc"><span class="kn">Print</span> euclid_trace_func_obligation_1.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace_func_obligation_1 =
+<span class="k">fun</span> (<span class="nv">a</span> <span class="nv">b</span> : nat) (<span class="nv">recurse</span> : <span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat)
+  (<span class="nv">a'</span> <span class="nv">b'</span> : nat) (<span class="nv">Ha</span> : S a' = a) (<span class="nv">Hb</span> : S b' = b) =&gt;
+eq_ind (S a')
+  (<span class="k">fun</span> <span class="nv">a0</span> : nat =&gt;
+   (<span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b0</span> : nat, a1 + b0 &lt; a0 + b -&gt; nat) -&gt;
+   S a' + (S b' - S a') &lt; a0 + b)
+  (<span class="k">fun</span> <span class="nv">recurse0</span> : <span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; S a' + b -&gt; nat =&gt;
+   eq_ind (S b')
+     (<span class="k">fun</span> <span class="nv">b0</span> : nat =&gt;
+      (<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b1</span> : nat, a0 + b1 &lt; S a' + b0 -&gt; nat) -&gt;
+      S a' + (S b' - S a') &lt; S a' + b0)
+     (<span class="k">fun</span> <span class="nv">_</span> : <span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; S a' + S b' -&gt; nat =&gt;
+      TerminationFacts.subtract_right_decreases a' b')
+     b Hb recurse0)
+  a Ha recurse
+     : <span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat,
+       (<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat) -&gt;
+       <span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat,
+       S a' = a -&gt; S b' = b -&gt; S a' + (S b' - S a') &lt; a + b
+
+<span class="kn">Arguments</span> euclid_trace_func_obligation_1 (a b)%_nat_scope
+  recurse%_function_scope (a' b')%_nat_scope Ha Hb</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chkd" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chkd"><span class="kn">Fail</span> <span class="kn">Check</span> euclid_trace.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+The reference euclid_trace was not found <span class="k">in</span> the current environment.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chke" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chke"><span class="kn">Obligations of</span> <span class="nf">euclid_trace_func</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="mi">3</span> obligation(s) remaining: </blockquote><blockquote class="alectryon-message">Obligation <span class="mi">2</span> of euclid_trace_func:
+(<span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat,
+ (<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat) -&gt;
+ <span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat, S a' = a -&gt; S b' = b -&gt; S a' - S b' + S b' &lt; a + b).
+</blockquote><blockquote class="alectryon-message">Obligation <span class="mi">3</span> of euclid_trace_func:
+(<span class="k">forall</span> (<span class="nv">a</span> <span class="nv">b</span> : nat)
+   (<span class="nv">euclid_trace</span> : <span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat),
+ <span class="k">let</span> <span class="nv">program_branch_0</span> :=
+   <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat) (<span class="nv">_</span> : <span class="mi">0</span> = a) (<span class="nv">_</span> : wildcard' = b) =&gt; b <span class="k">in</span>
+ <span class="k">let</span> <span class="nv">program_branch_1</span> :=
+   <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat)
+     (<span class="nv">_</span> : <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>))
+     (<span class="nv">_</span> : wildcard' = a) (<span class="nv">_</span> : <span class="mi">0</span> = b) =&gt;
+   a <span class="k">in</span>
+ <span class="k">let</span> <span class="nv">program_branch_2</span> :=
+   <span class="k">fun</span> (<span class="nv">a'</span> <span class="nv">b'</span> : nat) (<span class="nv">Heq_a</span> : S a' = a) (<span class="nv">Heq_b</span> : S b' = b) =&gt;
+   <span class="k">if</span> S a' &lt;=? S b'
+   <span class="k">then</span>
+    euclid_trace (S a') (S b' - S a')
+      ((<span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat)
+          (<span class="nv">recurse</span> : <span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b1</span> : nat, a1 + b1 &lt; a0 + b0 -&gt; nat)
+          (<span class="nv">a'0</span> <span class="nv">b'0</span> : nat) (<span class="nv">Ha</span> : S a'0 = a0) (<span class="nv">Hb</span> : S b'0 = b0) =&gt;
+        euclid_trace_func_obligation_1 a0 b0 recurse a'0 b'0 Ha Hb) a b
+         euclid_trace a' b' Heq_a Heq_b)
+   <span class="k">else</span>
+    euclid_trace (S a' - S b') (S b')
+      (euclid_trace_func_obligation_2 a b euclid_trace a' b' Heq_a Heq_b)
+   <span class="k">in</span>
+ <span class="k">forall</span> <span class="nv">n</span> : nat,
+ <span class="k">let</span> <span class="nv">wildcard'</span> := S n <span class="k">in</span>
+ <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>)).
+</blockquote><blockquote class="alectryon-message">Obligation <span class="mi">4</span> of euclid_trace_func:
+(well_founded
+   (MR lt
+      (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+       <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b))).
+</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chkf" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chkf"><span class="kn">Next Obligation</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat,
+(<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat) -&gt;
+<span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat, S a' = a -&gt; S b' = b -&gt; S a' - S b' + S b' &lt; a + b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk10" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk10"><span class="nb">intros</span> a b recurse a' b' Ha Hb.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a, b</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br><span><var>recurse</var><span class="hyp-type"><b>: </b><span><span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat</span></span></span><br><span><var>a', b'</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br><span><var>Ha</var><span class="hyp-type"><b>: </b><span>S a' = a</span></span></span><br><span><var>Hb</var><span class="hyp-type"><b>: </b><span>S b' = b</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">S a' - S b' + S b' &lt; a + b</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk11" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk11"><span class="nb">subst</span> a b.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a', b'</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br><span><var>recurse</var><span class="hyp-type"><b>: </b><span><span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat, a + b &lt; S a' + S b' -&gt; nat</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">S a' - S b' + S b' &lt; S a' + S b'</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><span class="alectryon-input"><span class="nb">apply</span> TerminationFacts.subtract_left_decreases.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk12" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk12"><span class="kn">Defined</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="mi">2</span> obligations remaining</blockquote><blockquote class="alectryon-message">Solving obligations automatically...</blockquote><blockquote class="alectryon-message"><span class="mi">2</span> obligations remaining</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** This third goal is match bookkeeping, not another recursive call. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk13" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk13"><span class="kn">Next Obligation</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="k">forall</span> (<span class="nv">a</span> <span class="nv">b</span> : nat)
+  (<span class="nv">euclid_trace</span> : <span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat),
+<span class="k">let</span> <span class="nv">program_branch_0</span> :=
+  <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat) (<span class="nv">_</span> : <span class="mi">0</span> = a) (<span class="nv">_</span> : wildcard' = b) =&gt; b <span class="k">in</span>
+<span class="k">let</span> <span class="nv">program_branch_1</span> :=
+  <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat)
+    (<span class="nv">_</span> : <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>))
+    (<span class="nv">_</span> : wildcard' = a) (<span class="nv">_</span> : <span class="mi">0</span> = b) =&gt;
+  a <span class="k">in</span>
+<span class="k">let</span> <span class="nv">program_branch_2</span> :=
+  <span class="k">fun</span> (<span class="nv">a'</span> <span class="nv">b'</span> : nat) (<span class="nv">Heq_a</span> : S a' = a) (<span class="nv">Heq_b</span> : S b' = b) =&gt;
+  <span class="k">if</span> S a' &lt;=? S b'
+  <span class="k">then</span>
+   euclid_trace (S a') (S b' - S a')
+     ((<span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat)
+         (<span class="nv">recurse</span> : <span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b1</span> : nat, a1 + b1 &lt; a0 + b0 -&gt; nat)
+         (<span class="nv">a'0</span> <span class="nv">b'0</span> : nat) (<span class="nv">Ha</span> : S a'0 = a0) (<span class="nv">Hb</span> : S b'0 = b0) =&gt;
+       euclid_trace_func_obligation_1 a0 b0 recurse a'0 b'0 Ha Hb) a b
+        euclid_trace a' b' Heq_a Heq_b)
+  <span class="k">else</span>
+   euclid_trace (S a' - S b') (S b')
+     ((<span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat)
+         (<span class="nv">recurse</span> : <span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b1</span> : nat, a1 + b1 &lt; a0 + b0 -&gt; nat)
+         (<span class="nv">a'0</span> <span class="nv">b'0</span> : nat) (<span class="nv">Ha</span> : S a'0 = a0) (<span class="nv">Hb</span> : S b'0 = b0) =&gt;
+       euclid_trace_func_obligation_2 a0 b0 recurse a'0 b'0 Ha Hb) a b
+        euclid_trace a' b' Heq_a Heq_b)
+  <span class="k">in</span>
+<span class="k">forall</span> <span class="nv">n</span> : nat,
+<span class="k">let</span> <span class="nv">wildcard'</span> := S n <span class="k">in</span>
+<span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk14" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk14"><span class="kn">Show</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="mi">1</span> goal
+
+  ============================
+  <span class="k">forall</span> (<span class="nv">a</span> <span class="nv">b</span> : nat)
+    (<span class="nv">euclid_trace</span> : <span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat),
+  <span class="k">let</span> <span class="nv">program_branch_0</span> :=
+    <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat) (<span class="nv">_</span> : <span class="mi">0</span> = a) (<span class="nv">_</span> : wildcard' = b) =&gt; b <span class="k">in</span>
+  <span class="k">let</span> <span class="nv">program_branch_1</span> :=
+    <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat)
+      (<span class="nv">_</span> : <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>))
+      (<span class="nv">_</span> : wildcard' = a) (<span class="nv">_</span> : <span class="mi">0</span> = b) =&gt;
+    a <span class="k">in</span>
+  <span class="k">let</span> <span class="nv">program_branch_2</span> :=
+    <span class="k">fun</span> (<span class="nv">a'</span> <span class="nv">b'</span> : nat) (<span class="nv">Heq_a</span> : S a' = a) (<span class="nv">Heq_b</span> : S b' = b) =&gt;
+    <span class="k">if</span> S a' &lt;=? S b'
+    <span class="k">then</span>
+     euclid_trace (S a') (S b' - S a')
+       ((<span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat)
+           (<span class="nv">recurse</span> : <span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b1</span> : nat, a1 + b1 &lt; a0 + b0 -&gt; nat)
+           (<span class="nv">a'0</span> <span class="nv">b'0</span> : nat) (<span class="nv">Ha</span> : S a'0 = a0) (<span class="nv">Hb</span> : S b'0 = b0) =&gt;
+         euclid_trace_func_obligation_1 a0 b0 recurse a'0 b'0 Ha Hb) a b
+          euclid_trace a' b' Heq_a Heq_b)
+    <span class="k">else</span>
+     euclid_trace (S a' - S b') (S b')
+       ((<span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat)
+           (<span class="nv">recurse</span> : <span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b1</span> : nat, a1 + b1 &lt; a0 + b0 -&gt; nat)
+           (<span class="nv">a'0</span> <span class="nv">b'0</span> : nat) (<span class="nv">Ha</span> : S a'0 = a0) (<span class="nv">Hb</span> : S b'0 = b0) =&gt;
+         euclid_trace_func_obligation_2 a0 b0 recurse a'0 b'0 Ha Hb) a b
+          euclid_trace a' b' Heq_a Heq_b)
+    <span class="k">in</span>
+  <span class="k">forall</span> <span class="nv">n</span> : nat,
+  <span class="k">let</span> <span class="nv">wildcard'</span> := S n <span class="k">in</span>
+  <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>)</blockquote></div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="k">forall</span> (<span class="nv">a</span> <span class="nv">b</span> : nat)
+  (<span class="nv">euclid_trace</span> : <span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat),
+<span class="k">let</span> <span class="nv">program_branch_0</span> :=
+  <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat) (<span class="nv">_</span> : <span class="mi">0</span> = a) (<span class="nv">_</span> : wildcard' = b) =&gt; b <span class="k">in</span>
+<span class="k">let</span> <span class="nv">program_branch_1</span> :=
+  <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat)
+    (<span class="nv">_</span> : <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>))
+    (<span class="nv">_</span> : wildcard' = a) (<span class="nv">_</span> : <span class="mi">0</span> = b) =&gt;
+  a <span class="k">in</span>
+<span class="k">let</span> <span class="nv">program_branch_2</span> :=
+  <span class="k">fun</span> (<span class="nv">a'</span> <span class="nv">b'</span> : nat) (<span class="nv">Heq_a</span> : S a' = a) (<span class="nv">Heq_b</span> : S b' = b) =&gt;
+  <span class="k">if</span> S a' &lt;=? S b'
+  <span class="k">then</span>
+   euclid_trace (S a') (S b' - S a')
+     ((<span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat)
+         (<span class="nv">recurse</span> : <span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b1</span> : nat, a1 + b1 &lt; a0 + b0 -&gt; nat)
+         (<span class="nv">a'0</span> <span class="nv">b'0</span> : nat) (<span class="nv">Ha</span> : S a'0 = a0) (<span class="nv">Hb</span> : S b'0 = b0) =&gt;
+       euclid_trace_func_obligation_1 a0 b0 recurse a'0 b'0 Ha Hb) a b
+        euclid_trace a' b' Heq_a Heq_b)
+  <span class="k">else</span>
+   euclid_trace (S a' - S b') (S b')
+     ((<span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat)
+         (<span class="nv">recurse</span> : <span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b1</span> : nat, a1 + b1 &lt; a0 + b0 -&gt; nat)
+         (<span class="nv">a'0</span> <span class="nv">b'0</span> : nat) (<span class="nv">Ha</span> : S a'0 = a0) (<span class="nv">Hb</span> : S b'0 = b0) =&gt;
+       euclid_trace_func_obligation_2 a0 b0 recurse a'0 b'0 Ha Hb) a b
+        euclid_trace a' b' Heq_a Heq_b)
+  <span class="k">in</span>
+<span class="k">forall</span> <span class="nv">n</span> : nat,
+<span class="k">let</span> <span class="nv">wildcard'</span> := S n <span class="k">in</span>
+<span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><span class="alectryon-input"><span class="nb">intros</span>; <span class="nb">intuition</span> <span class="bp">discriminate</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk15" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk15"><span class="kn">Defined</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="mi">1</span> obligation remaining</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Both decreases are proved, but the relation still needs a proof of</span>
+<span class="sd">    well-foundedness. The public function remains unavailable. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk16" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk16"><span class="kn">Fail</span> <span class="kn">Check</span> euclid_trace.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+The reference euclid_trace was not found <span class="k">in</span> the current environment.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk17" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk17"><span class="kn">Fail</span> <span class="kn">Check</span> euclid_trace_func.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+The reference euclid_trace_func was not found <span class="k">in</span> the current environment.
+Did you mean euclid_sub_func?</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk18" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk18"><span class="kn">Obligations of</span> <span class="nf">euclid_trace_func</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="mi">1</span> obligation(s) remaining: </blockquote><blockquote class="alectryon-message">Obligation <span class="mi">4</span> of euclid_trace_func:
+(well_founded
+   (MR lt
+      (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+       <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b))).
+</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk19" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk19"><span class="kn">Preterm of</span> <span class="nf">euclid_trace_func</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace_func :
+(<span class="k">forall</span> <span class="nv">recarg</span> : {_ : nat &amp; nat},
+ <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> nat)
+:=
+(Fix_sub {_ : nat &amp; nat}
+   (MR lt
+      (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+       <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b))
+   euclid_trace_func_obligation_4
+   (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+    <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> nat)
+   (<span class="k">fun</span> (<span class="nv">recarg</span> : {_ : nat &amp; nat})
+      (<span class="nv">euclid_trace'</span> : <span class="k">forall</span>
+                         <span class="nv">recarg'</span> : {recarg' : {_ : nat &amp; nat}
+                                   | (<span class="k">let</span> <span class="nv">a</span> := projT1 recarg' <span class="k">in</span>
+                                      <span class="k">let</span> <span class="nv">b</span> := projT2 recarg' <span class="k">in</span> a + b) &lt;
+                                     (<span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span>
+                                      <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b)},
+                       <span class="k">let</span> <span class="nv">a</span> := projT1 (proj1_sig recarg') <span class="k">in</span>
+                       <span class="k">let</span> <span class="nv">b</span> := projT2 (proj1_sig recarg') <span class="k">in</span> nat) =&gt;
+    <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span>
+    <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span>
+    <span class="k">let</span> <span class="nv">euclid_trace</span> :=
+      <span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat) (<span class="nv">recproof</span> : a0 + b0 &lt; a + b) =&gt;
+      euclid_trace'
+        (exist
+           (<span class="k">fun</span> <span class="nv">recarg'</span> : {_ : nat &amp; nat} =&gt;
+            (<span class="k">let</span> <span class="nv">a1</span> := projT1 recarg' <span class="k">in</span> <span class="k">let</span> <span class="nv">b1</span> := projT2 recarg' <span class="k">in</span> a1 + b1) &lt;
+            (<span class="k">let</span> <span class="nv">a1</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b1</span> := projT2 recarg <span class="k">in</span> a1 + b1))
+           (existT (<span class="k">fun</span> <span class="nv">_</span> : nat =&gt; nat) a0 b0) recproof)
+      <span class="k">in</span>
+    <span class="k">let</span> <span class="nv">program_branch_0</span> :=
+      <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat) (<span class="nv">_</span> : <span class="mi">0</span> = a) (<span class="nv">_</span> : wildcard' = b) =&gt; b <span class="k">in</span>
+    <span class="k">let</span> <span class="nv">program_branch_1</span> :=
+      <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat)
+        (<span class="nv">_</span> : <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>))
+        (<span class="nv">_</span> : wildcard' = a) (<span class="nv">_</span> : <span class="mi">0</span> = b) =&gt;
+      a <span class="k">in</span>
+    <span class="k">let</span> <span class="nv">program_branch_2</span> :=
+      <span class="k">fun</span> (<span class="nv">a'</span> <span class="nv">b'</span> : nat) (<span class="nv">Heq_a</span> : S a' = a) (<span class="nv">Heq_b</span> : S b' = b) =&gt;
+      <span class="k">if</span> S a' &lt;=? S b'
+      <span class="k">then</span>
+       euclid_trace (S a') (S b' - S a')
+         (euclid_trace_func_obligation_1 a b euclid_trace a' b' Heq_a Heq_b)
+      <span class="k">else</span>
+       euclid_trace (S a' - S b') (S b')
+         (euclid_trace_func_obligation_2 a b euclid_trace a' b' Heq_a Heq_b)
+      <span class="k">in</span>
+    <span class="k">match</span> a <span class="k">as</span> a' <span class="k">return</span> a' = a -&gt; b = b -&gt; nat <span class="k">with</span>
+    | <span class="mi">0</span> =&gt; program_branch_0 b
+    | S a' =&gt;
+        <span class="k">match</span> b <span class="k">as</span> b' <span class="k">return</span> S a' = a -&gt; b' = b -&gt; nat <span class="k">with</span>
+        | <span class="mi">0</span> =&gt;
+            program_branch_1 (S a')
+              (euclid_trace_func_obligation_3 a b euclid_trace a')
+        | S b' =&gt; program_branch_2 a' b'
+        <span class="k">end</span>
+    <span class="k">end</span> eq_refl eq_refl))</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk1a" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk1a"><span class="kn">Next Obligation</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">well_founded
+  (MR lt
+     (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+      <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk1b" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk1b"><span class="kn">Show</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="mi">1</span> goal
+
+  ============================
+  well_founded
+    (MR lt
+       (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+        <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b))</blockquote></div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">well_founded
+  (MR lt
+     (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+      <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk1c" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk1c"><span class="nb">apply</span> measure_wf.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">well_founded lt</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">exact</span> TerminationFacts.nat_lt_wf.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk1d" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk1d"><span class="kn">Defined</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">No more obligations remaining</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Crossing this last [Defined] completes the definition and its</span>
+<span class="sd">    two-argument wrapper. No extra admission command is needed. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk1e" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk1e"><span class="kn">Check</span> euclid_trace_func.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace_func
+     : <span class="k">forall</span> <span class="nv">recarg</span> : {_ : nat &amp; nat},
+       <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk1f" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk1f"><span class="kn">Check</span> euclid_trace.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace
+     : nat -&gt; nat -&gt; nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk20" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk20"><span class="kn">Print</span> euclid_trace.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace =
+<span class="k">fun</span> <span class="nv">a</span> <span class="nv">b</span> : nat =&gt; euclid_trace_func (existT (<span class="k">fun</span> <span class="nv">_</span> : nat =&gt; nat) a b)
+     : nat -&gt; nat -&gt; nat
+
+<span class="kn">Arguments</span> euclid_trace (a b)%_nat_scope</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk21" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk21"><span class="kn">Print</span> euclid_trace_func.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace_func =
+Fix_sub {_ : nat &amp; nat}
+  (MR lt
+     (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+      <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b))
+  euclid_trace_func_obligation_4
+  (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+   <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> nat)
+  (<span class="k">fun</span> (<span class="nv">recarg</span> : {_ : nat &amp; nat})
+     (<span class="nv">euclid_trace'</span> : <span class="k">forall</span>
+                        <span class="nv">recarg'</span> : {recarg' : {_ : nat &amp; nat}
+                                  | (<span class="k">let</span> <span class="nv">a</span> := projT1 recarg' <span class="k">in</span>
+                                     <span class="k">let</span> <span class="nv">b</span> := projT2 recarg' <span class="k">in</span> a + b) &lt;
+                                    (<span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span>
+                                     <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b)},
+                      <span class="k">let</span> <span class="nv">a</span> := projT1 (proj1_sig recarg') <span class="k">in</span>
+                      <span class="k">let</span> <span class="nv">b</span> := projT2 (proj1_sig recarg') <span class="k">in</span> nat) =&gt;
+   <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span>
+   <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span>
+   <span class="k">let</span> <span class="nv">euclid_trace</span> :=
+     <span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat) (<span class="nv">recproof</span> : a0 + b0 &lt; a + b) =&gt;
+     euclid_trace'
+       (exist
+          (<span class="k">fun</span> <span class="nv">recarg'</span> : {_ : nat &amp; nat} =&gt;
+           (<span class="k">let</span> <span class="nv">a1</span> := projT1 recarg' <span class="k">in</span> <span class="k">let</span> <span class="nv">b1</span> := projT2 recarg' <span class="k">in</span> a1 + b1) &lt;
+           (<span class="k">let</span> <span class="nv">a1</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b1</span> := projT2 recarg <span class="k">in</span> a1 + b1))
+          (existT (<span class="k">fun</span> <span class="nv">_</span> : nat =&gt; nat) a0 b0) recproof)
+     <span class="k">in</span>
+   <span class="k">let</span> <span class="nv">program_branch_0</span> :=
+     <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat) (<span class="nv">_</span> : <span class="mi">0</span> = a) (<span class="nv">_</span> : wildcard' = b) =&gt; b <span class="k">in</span>
+   <span class="k">let</span> <span class="nv">program_branch_1</span> :=
+     <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat)
+       (<span class="nv">_</span> : <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>))
+       (<span class="nv">_</span> : wildcard' = a) (<span class="nv">_</span> : <span class="mi">0</span> = b) =&gt;
+     a <span class="k">in</span>
+   <span class="k">let</span> <span class="nv">program_branch_2</span> :=
+     <span class="k">fun</span> (<span class="nv">a'</span> <span class="nv">b'</span> : nat) (<span class="nv">Heq_a</span> : S a' = a) (<span class="nv">Heq_b</span> : S b' = b) =&gt;
+     <span class="k">if</span> S a' &lt;=? S b'
+     <span class="k">then</span>
+      euclid_trace (S a') (S b' - S a')
+        ((<span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat)
+            (<span class="nv">recurse</span> : <span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b1</span> : nat, a1 + b1 &lt; a0 + b0 -&gt; nat)
+            (<span class="nv">a'0</span> <span class="nv">b'0</span> : nat) (<span class="nv">Ha</span> : S a'0 = a0) (<span class="nv">Hb</span> : S b'0 = b0) =&gt;
+          euclid_trace_func_obligation_1 a0 b0 recurse a'0 b'0 Ha Hb) a b
+           euclid_trace a' b' Heq_a Heq_b)
+     <span class="k">else</span>
+      euclid_trace (S a' - S b') (S b')
+        ((<span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat)
+            (<span class="nv">recurse</span> : <span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b1</span> : nat, a1 + b1 &lt; a0 + b0 -&gt; nat)
+            (<span class="nv">a'0</span> <span class="nv">b'0</span> : nat) (<span class="nv">Ha</span> : S a'0 = a0) (<span class="nv">Hb</span> : S b'0 = b0) =&gt;
+          euclid_trace_func_obligation_2 a0 b0 recurse a'0 b'0 Ha Hb) a b
+           euclid_trace a' b' Heq_a Heq_b)
+     <span class="k">in</span>
+   <span class="k">match</span> a <span class="k">as</span> a' <span class="k">return</span> a' = a -&gt; b = b -&gt; nat <span class="k">with</span>
+   | <span class="mi">0</span> =&gt; program_branch_0 b
+   | S a' =&gt;
+       <span class="k">match</span> b <span class="k">as</span> b' <span class="k">return</span> S a' = a -&gt; b' = b -&gt; nat <span class="k">with</span>
+       | <span class="mi">0</span> =&gt;
+           program_branch_1 (S a')
+             ((<span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat)
+                 (<span class="nv">_</span> : <span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b1</span> : nat, a1 + b1 &lt; a0 + b0 -&gt; nat)
+                 (<span class="nv">n</span> <span class="nv">wildcard'</span> : nat) =&gt;
+               euclid_trace_func_obligation_3 n wildcard') a b euclid_trace
+                a')
+       | S b' =&gt; program_branch_2 a' b'
+       <span class="k">end</span>
+   <span class="k">end</span> eq_refl eq_refl)
+     : <span class="k">forall</span> <span class="nv">recarg</span> : {_ : nat &amp; nat},
+       <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> nat
+
+<span class="kn">Arguments</span> euclid_trace_func recarg</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk22" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk22"><span class="kn">Print</span> euclid_trace_func_obligation_2.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace_func_obligation_2 =
+<span class="k">fun</span> (<span class="nv">a</span> <span class="nv">b</span> : nat) (<span class="nv">recurse</span> : <span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat)
+  (<span class="nv">a'</span> <span class="nv">b'</span> : nat) (<span class="nv">Ha</span> : S a' = a) (<span class="nv">Hb</span> : S b' = b) =&gt;
+eq_ind (S a')
+  (<span class="k">fun</span> <span class="nv">a0</span> : nat =&gt;
+   (<span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b0</span> : nat, a1 + b0 &lt; a0 + b -&gt; nat) -&gt;
+   S a' - S b' + S b' &lt; a0 + b)
+  (<span class="k">fun</span> <span class="nv">recurse0</span> : <span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; S a' + b -&gt; nat =&gt;
+   eq_ind (S b')
+     (<span class="k">fun</span> <span class="nv">b0</span> : nat =&gt;
+      (<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b1</span> : nat, a0 + b1 &lt; S a' + b0 -&gt; nat) -&gt;
+      S a' - S b' + S b' &lt; S a' + b0)
+     (<span class="k">fun</span> <span class="nv">_</span> : <span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; S a' + S b' -&gt; nat =&gt;
+      TerminationFacts.subtract_left_decreases a' b')
+     b Hb recurse0)
+  a Ha recurse
+     : <span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat,
+       (<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat) -&gt;
+       <span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat, S a' = a -&gt; S b' = b -&gt; S a' - S b' + S b' &lt; a + b
+
+<span class="kn">Arguments</span> euclid_trace_func_obligation_2 (a b)%_nat_scope
+  recurse%_function_scope (a' b')%_nat_scope Ha Hb</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk23" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk23"><span class="kn">Print</span> euclid_trace_func_obligation_3.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace_func_obligation_3 =
+<span class="k">fun</span> <span class="nv">n</span> : nat =&gt;
+<span class="k">let</span> <span class="nv">wildcard'</span> := S n <span class="k">in</span>
+<span class="k">fun</span> (<span class="nv">wildcard'0</span> : nat) (<span class="nv">H</span> : <span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>) =&gt;
+and_ind
+  (<span class="k">fun</span> (<span class="nv">H0</span> : <span class="mi">0</span> = wildcard') (<span class="nv">_</span> : wildcard'0 = <span class="mi">0</span>) =&gt;
+   <span class="k">let</span> <span class="nv">H1</span> : <span class="kt">False</span> :=
+     eq_ind <span class="mi">0</span> (<span class="k">fun</span> <span class="nv">e</span> : nat =&gt; <span class="k">match</span> e <span class="k">with</span>
+                              | <span class="mi">0</span> =&gt; <span class="kt">True</span>
+                              | S _ =&gt; <span class="kt">False</span>
+                              <span class="k">end</span>)
+       I wildcard' H0
+     <span class="k">in</span>
+   False_ind <span class="kt">False</span> H1)
+  H
+     : <span class="k">forall</span> <span class="nv">n</span> : nat,
+       <span class="k">let</span> <span class="nv">wildcard'</span> := S n <span class="k">in</span>
+       <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>)
+
+<span class="kn">Arguments</span> euclid_trace_func_obligation_3 (n wildcard')%_nat_scope _</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk24" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk24"><span class="kn">Print</span> euclid_trace_func_obligation_4.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace_func_obligation_4 =
+measure_wf TerminationFacts.nat_lt_wf
+  (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+   <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b)
+     : well_founded
+         (MR lt
+            (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+             <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b))
+
+<span class="kn">Arguments</span> euclid_trace_func_obligation_4 a</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk25" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk25"><span class="kn">Compute</span> (euclid_trace <span class="mi">18</span> <span class="mi">48</span>).</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= <span class="mi">6</span>
+: nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk26" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk26"><span class="kn">Example</span> <span class="nf">traced_result</span> : euclid_trace <span class="mi">18</span> <span class="mi">48</span> = <span class="mi">6</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">euclid_trace <span class="mi">18</span> <span class="mi">48</span> = <span class="mi">6</span></div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk27" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk27"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">euclid_trace <span class="mi">18</span> <span class="mi">48</span> = <span class="mi">6</span></div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">reflexivity</span>.</span><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Obligations-v-chk28" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Obligations-v-chk28"><span class="kn">Print Assumptions</span> euclid_trace.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Fetching opaque proofs <span class="kn">from</span> disk <span class="k">for</span> Corelib.Init.Peano</blockquote><blockquote class="alectryon-message">Closed <span class="nb">under</span> the <span class="kn">global</span> <span class="kp">context</span></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Checkpoint:</span>
+
+<span class="sd">    - Point to the proof argument attached to the [then] call in Preterm.</span>
+<span class="sd">    - Classify the four obligations: two decreases, one match condition,</span>
+<span class="sd">      one well-foundedness proof.</span>
+<span class="sd">    - At which command does [Check euclid_trace] first succeed?</span>
+
+<span class="sd">    The four propositions constrain THIS proposed term. The proofs are</span>
+<span class="sd">    referenced or substituted into its holes, not filed beside unrelated</span>
+<span class="sd">    source text. We inspect the final connection again in Lesson 4.</span>
+
+<span class="sd">    Next: L03_Accessibility.v -- what core recursion does Fix_sub use?</span>
+<span class="sd">*)</span>
+</span></pre></article></body></html>

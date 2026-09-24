@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html class="alectryon-standalone"><head><title>L04_Boundaries.v</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta content="Alectryon" name="generator"><link href="alectryon.css" rel="stylesheet"><link href="pygments.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/IBM-type/0.5.4/css/ibm-type.min.css" integrity="sha512-sky5cf9Ts6FY1kstGOBHSybfKqdHR41M0Ldb0BjNiv3ifltoQIsg0zIaQ+wwdwgQ0w9vKFW7Js50lxH9vqNSSw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/firacode/5.2.0/fira_code.min.css" integrity="sha512-MbysAYimH1hH2xYzkkMHB6MqxBqfP0megxsCLknbYqHVwXTCg9IqHbk+ZP/vnhO8UEW6PaXAkKe2vQ+SWACxxA==" crossorigin="anonymous" /><script src="alectryon.js"></script></head><body><article class="alectryon-root alectryon-centered"><div class="alectryon-banner">Built with <a href="https://github.com/cpitclaudel/alectryon/">Alectryon</a>, running vsrocq-language-server v9.4+alpha 5.4.1 / 2.5.0. Bubbles (<span class="alectryon-bubble"></span>) indicate interactive fragments: hover for details, tap to reveal contents. Use <kbd>Ctrl+↑</kbd> <kbd>Ctrl+↓</kbd> to navigate, <kbd>Ctrl+🖱️</kbd> to focus. On Mac, use <kbd>⌘</kbd> instead of <kbd>Ctrl</kbd>.</div><pre class="alectryon-io highlight"><!-- Generator: Alectryon --><span class="alectryon-txt"><span class="sd">(** Lesson 4 -- Acceptance is not a metatheoretic certificate.</span>
+<span class="sd">    (~20 minutes.)</span>
+
+<span class="sd">    Open this as a separate document/process. It imports no other study</span>
+<span class="sd">    lesson, and no other lesson imports it. The build compiles each file</span>
+<span class="sd">    in a separate Rocq process.</span>
+
+<span class="sd">    This file deliberately declares one nonconfluent system and one</span>
+<span class="sd">    ill-typed rule. Do not use their compiled module as a proof library.</span>
+<span class="sd">    We only inspect the failure modes; there is no admitted proof or</span>
+<span class="sd">    disabled guard/universe check. See the local manual's section</span>
+<span class="sd">    "Rewrite rules, type preservation, confluence and termination".</span>
+<span class="sd">*)</span>
+
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">From</span> Corelib <span class="kn">Require Import</span> Init.Nat.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> Guard Checking.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> <span class="kn">Universe</span> <span class="nf">Checking</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Boundaries-v-chk0" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Boundaries-v-chk0"><span class="kn">Test</span> Guard Checking.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Guard Checking <span class="k">is</span> on</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Boundaries-v-chk1" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Boundaries-v-chk1"><span class="kn">Test</span> <span class="kn">Universe</span> <span class="nf">Checking</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="kn">Universe</span> <span class="nf">Checking</span> <span class="k">is</span> on</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Each replacement has type [nat]. But the two rules permit a peak</span>
+
+<span class="sd">                              forked</span>
+<span class="sd">                              /    \</span>
+<span class="sd">                             0      1</span>
+
+<span class="sd">    with distinct normal forms under the declared relation: neither</span>
+<span class="sd">    numeral has a reduction. Thus this tiny system is not confluent.</span>
+<span class="sd">    Rocq accepts the block without a confluence check. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input">Symbol forked : nat.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input">Rewrite Rule forked_rules :=
+| forked =&gt; <span class="mi">0</span>
+| forked =&gt; <span class="mi">1</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Boundaries-v-chk2" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Boundaries-v-chk2"><span class="kn">Eval</span> <span class="nb">cbn</span> <span class="k">in</span> forked.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= <span class="mi">1</span>
+: nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** This checkout returns [1]. A reducer picking one rule does not make</span>
+<span class="sd">    the relation containing BOTH declared rules confluent. An observed</span>
+<span class="sd">    strategy is not a proof that all reduction paths can be joined. *)</span>
+
+<span class="sd">(** Type preservation has a different failure mode. Predict: rejection,</span>
+<span class="sd">    warning, or silent acceptance? Read the output before continuing. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input">Symbol mistyped : nat.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Boundaries-v-chk3" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Boundaries-v-chk3">Rewrite Rule mistyped_rule := mistyped =&gt; true.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">This <span class="nb">rewrite</span> rule breaks subject reduction
+(the replacement term doesn't <span class="nb">have</span> the <span class="kp">type of</span> the <span class="nb">pattern</span>).
+The term <span class="s2">"true"</span> has type <span class="s2">"bool"</span> while it <span class="k">is</span> expected to <span class="nb">have</span> type <span class="s2">"nat"</span>.
+[<span class="nb">rewrite</span>-rules-break-SR,<span class="nb">rewrite</span>-rules,default]</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Boundaries-v-chk4" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Boundaries-v-chk4"><span class="kn">Check</span> mistyped.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">mistyped
+     : nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Boundaries-v-chk5" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Boundaries-v-chk5"><span class="kn">Eval</span> <span class="nb">cbn</span> <span class="k">in</span> mistyped.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= true
+: nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** The warning is [rewrite-rules-break-SR]. The Eval output prints</span>
+<span class="sd">    [true : nat], retaining the type of the input expression. It is not</span>
+<span class="sd">    an independent successful typecheck of the displayed result! *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Boundaries-v-chk6" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Boundaries-v-chk6"><span class="kn">Check</span> true.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">true
+     : bool</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Boundaries-v-chk7" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Boundaries-v-chk7"><span class="kn">Fail</span> <span class="kn">Definition</span> <span class="nf">result_has_original_type</span> : nat := true.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+The term <span class="s2">"true"</span> has type <span class="s2">"bool"</span> while it <span class="k">is</span> expected to <span class="nb">have</span> type <span class="s2">"nat"</span>.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Boundaries-v-chk8" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Boundaries-v-chk8"><span class="kn">Print Assumptions</span> mistyped.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="kn">Axioms</span>:
+mistyped : nat
+Theory:
+Rewrite rules are allowed (subject reduction might be broken)</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Here is the concrete failed preservation claim:</span>
+
+<span class="sd">      [mistyped] has type [nat]; the declared rule reduces it to [true];</span>
+<span class="sd">      [true] itself has type [bool], and is rejected at type [nat].</span>
+
+<span class="sd">    The warning is useful evidence about this example. Absence of that</span>
+<span class="sd">    warning would not prove subject reduction: the manual describes the</span>
+<span class="sd">    check as incomplete. Turning the warning into an error does not</span>
+<span class="sd">    establish that the check catches all bad rules.</span>
+
+<span class="sd">    Keep four questions separate:</span>
+
+<span class="sd">    - Confluence: can competing reduction paths always be joined?</span>
+<span class="sd">    - Subject reduction: does reduction preserve the original type?</span>
+<span class="sd">    - Termination: can reduction continue indefinitely?</span>
+<span class="sd">    - Consistency: is the logical theory free of a closed proof of False?</span>
+
+<span class="sd">    These properties have connections, but none is interchangeable with</span>
+<span class="sd">    "the file compiled". A [Symbol] itself can introduce an assumption;</span>
+<span class="sd">    consistency is not solely a question about its rewrite rules.</span>
+
+<span class="sd">    We do not run a nonterminating native rule. The paper studies</span>
+<span class="sd">    confluence without assuming termination; that mathematical point</span>
+<span class="sd">    does not require deliberately hanging this checkout's reducer.</span>
+
+<span class="sd">    For the next reading phase, Rewster (JAR 2026), section 1, gives</span>
+<span class="sd">    subtler examples. Example 3 uses typing to relate vector indices;</span>
+<span class="sd">    Example 4 shows why apparent injectivity of a symbol can disappear</span>
+<span class="sd">    after another rule is added. Locate [Failsafe] in Figure 9: why</span>
+<span class="sd">    must the typing criterion avoid extracting that latter equality?</span>
+<span class="sd">    These paper examples are planned visits, not executed in this file.</span>
+
+<span class="sd">    Checkpoint: which checks rejected Lesson 2's examples, and which</span>
+<span class="sd">    properties did the accepted declarations here fail to establish?</span>
+
+<span class="sd">    Next: L05_Triangle.v -- a sufficient argument for confluence.</span>
+<span class="sd">*)</span>
+</span></pre></article></body></html>

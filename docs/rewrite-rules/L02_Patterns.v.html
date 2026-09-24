@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html class="alectryon-standalone"><head><title>L02_Patterns.v</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta content="Alectryon" name="generator"><link href="alectryon.css" rel="stylesheet"><link href="pygments.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/IBM-type/0.5.4/css/ibm-type.min.css" integrity="sha512-sky5cf9Ts6FY1kstGOBHSybfKqdHR41M0Ldb0BjNiv3ifltoQIsg0zIaQ+wwdwgQ0w9vKFW7Js50lxH9vqNSSw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/firacode/5.2.0/fira_code.min.css" integrity="sha512-MbysAYimH1hH2xYzkkMHB6MqxBqfP0megxsCLknbYqHVwXTCg9IqHbk+ZP/vnhO8UEW6PaXAkKe2vQ+SWACxxA==" crossorigin="anonymous" /><script src="alectryon.js"></script></head><body><article class="alectryon-root alectryon-centered"><div class="alectryon-banner">Built with <a href="https://github.com/cpitclaudel/alectryon/">Alectryon</a>, running vsrocq-language-server v9.4+alpha 5.4.1 / 2.5.0. Bubbles (<span class="alectryon-bubble"></span>) indicate interactive fragments: hover for details, tap to reveal contents. Use <kbd>Ctrl+↑</kbd> <kbd>Ctrl+↓</kbd> to navigate, <kbd>Ctrl+🖱️</kbd> to focus. On Mac, use <kbd>⌘</kbd> instead of <kbd>Ctrl</kbd>.</div><pre class="alectryon-io highlight"><!-- Generator: Alectryon --><span class="alectryon-txt"><span class="sd">(** Lesson 2 -- What makes a native rule a valid pattern? (~20 minutes.)</span>
+
+<span class="sd">    This file is independent of Lesson 1. Keep the diagnostic for each</span>
+<span class="sd">    [Fail] visible. Ask which check explains it: a head restriction,</span>
+<span class="sd">    pattern-variable binding, or ordinary typing?</span>
+
+<span class="sd">    See the matching manual's "Pattern syntax" section. The fragment</span>
+<span class="sd">    used here is first order. Lambda/match patterns, explicit hole</span>
+<span class="sd">    substitutions, and universes belong to the later reading plan.</span>
+<span class="sd">*)</span>
+
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">From</span> Corelib <span class="kn">Require Import</span> Init.Nat.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> Guard Checking.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> <span class="kn">Universe</span> <span class="nf">Checking</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">ordinary_identity</span> (<span class="nv">n</span> : nat) := n.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** A defined constant cannot be the head of a native rule. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Patterns-v-chk0" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Patterns-v-chk0"><span class="kn">Fail</span> Rewrite Rule on_definition := ordinary_identity <span class="nl">?n</span> =&gt; <span class="nl">?n</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+Subterm not recognised <span class="kn">as pattern</span>: ordinary_identity</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** A constructor can occur INSIDE a pattern, but the head of the rule</span>
+<span class="sd">    must be a symbol. This cannot install a reduction for [S] itself. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Patterns-v-chk1" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Patterns-v-chk1"><span class="kn">Fail</span> Rewrite Rule on_constructor := S <span class="nl">?n</span> =&gt; <span class="nl">?n</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+Head head-<span class="nb">pattern</span> <span class="k">is</span> not a symbol.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input">Symbol peel : nat -&gt; nat.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input">Rewrite Rule peel_successor := peel (S <span class="nl">?n</span>) =&gt; <span class="nl">?n</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">peel_example</span> : <span class="k">forall</span> <span class="nv">n</span>, peel (S n) = n :=
+  <span class="k">fun</span> <span class="nv">n</span> =&gt; eq_refl.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Patterns-v-chk2" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Patterns-v-chk2"><span class="kn">Eval</span> <span class="nb">cbn</span> <span class="k">in</span> peel <span class="mi">0</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= peel <span class="mi">0</span>
+: nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** There is no completeness/coverage obligation requiring a rule for</span>
+<span class="sd">    [peel 0]. With no applicable rule this term remains stuck. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Patterns-v-chk3" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Patterns-v-chk3"><span class="kn">Fail</span> <span class="kn">Definition</span> <span class="nf">peel_zero</span> : peel <span class="mi">0</span> = <span class="mi">0</span> := eq_refl.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+The term <span class="s2">"eq_refl"</span> has type <span class="s2">"peel 0 = peel 0"</span>
+while it <span class="k">is</span> expected to <span class="nb">have</span> type <span class="s2">"peel 0 = 0"</span> (cannot <span class="nb">unify</span> 
+<span class="s2">"peel 0"</span> <span class="kn">and</span> <span class="s2">"0"</span>).</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input">Symbol choose : nat -&gt; nat -&gt; nat.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** A repeated named hole does not mean "compare these arguments".</span>
+<span class="sd">    Named pattern holes must be bound at most once (left-linearity). *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Patterns-v-chk4" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Patterns-v-chk4"><span class="kn">Fail</span> Rewrite Rule nonlinear := choose <span class="nl">?n</span> <span class="nl">?n</span> =&gt; <span class="nl">?n</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+<span class="kn">Variable</span> <span class="nl">?n</span> <span class="k">is</span> bound multiple times <span class="k">in</span> the <span class="nb">pattern</span> (holes number <span class="mi">1</span> <span class="kn">and</span> <span class="mi">2</span>).</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** A replacement cannot invent an unbound hole. This checkout may</span>
+<span class="sd">    warn during elaboration before reporting the final binding error. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Patterns-v-chk5" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Patterns-v-chk5"><span class="kn">Fail</span> Rewrite Rule unbound_rhs := choose <span class="nl">?n</span> _ =&gt; <span class="nl">?missing</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">This <span class="nb">rewrite</span> rule breaks subject reduction
+(the replacement term doesn't <span class="nb">have</span> the <span class="kp">type of</span> the <span class="nb">pattern</span>).
+Unknown existential variable. [<span class="nb">rewrite</span>-rules-break-SR,<span class="nb">rewrite</span>-rules,default]</blockquote><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+Unknown existential variable.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Separate [_] holes discard independently matched arguments. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input">Rewrite Rule choose_first := choose <span class="nl">?n</span> _ =&gt; <span class="nl">?n</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">choose_example</span> : <span class="k">forall</span> <span class="nv">n</span> <span class="nv">m</span>, choose n m = n :=
+  <span class="k">fun</span> <span class="nv">n</span> <span class="nv">m</span> =&gt; eq_refl.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input">Symbol inspect : nat -&gt; nat.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** A hole also cannot be the head of an application inside a pattern.</span>
+<span class="sd">    The elaborator can type this application; the pattern check rejects</span>
+<span class="sd">    its shape. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Patterns-v-chk6" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Patterns-v-chk6"><span class="kn">Fail</span> Rewrite Rule application_hole := inspect (<span class="nl">?f</span> <span class="nl">?n</span>) =&gt; <span class="mi">0</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+Subterm not recognised <span class="kn">as pattern</span>: <span class="nl">?f</span></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Rules in sections are not supported by this checkout. Even a rule</span>
+<span class="sd">    which does not mention any section variable is rejected there. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Section</span> <span class="nf">UnsupportedSection</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Patterns-v-chk7" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Patterns-v-chk7"><span class="kn">Fail</span> Rewrite Rule in_section := inspect <span class="mi">0</span> =&gt; <span class="mi">0</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+Adding <span class="nb">rewrite</span> rules not supported <span class="k">in</span> sections.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">End</span> <span class="nf">UnsupportedSection</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input">Rewrite Rule inspect_zero := inspect <span class="mi">0</span> =&gt; <span class="mi">0</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Patterns-v-chk8" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Patterns-v-chk8"><span class="kn">Example</span> <span class="nf">inspect_example</span> : inspect <span class="mi">0</span> = <span class="mi">0</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">inspect <span class="mi">0</span> = <span class="mi">0</span></div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L02-Patterns-v-chk9" style="display: none" type="checkbox"><label class="alectryon-input" for="L02-Patterns-v-chk9"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">inspect <span class="mi">0</span> = <span class="mi">0</span></div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">reflexivity</span>.</span><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Checkpoint</span>
+
+<span class="sd">    Classify each failure above. Then explain why accepting [peel] does</span>
+<span class="sd">    not establish coverage, and why checking left-linearity does not</span>
+<span class="sd">    by itself establish confluence of a collection of rules.</span>
+
+<span class="sd">    Cues: symbol heads and rigid patterns restrict matching; holes must</span>
+<span class="sd">    be bound once and available on the right; sections are unsupported;</span>
+<span class="sd">    none of these checks compares all possible reductions of a term.</span>
+
+<span class="sd">    Next: L03_Admission.v -- what is registered and later reused?</span>
+<span class="sd">*)</span>
+</span></pre></article></body></html>
