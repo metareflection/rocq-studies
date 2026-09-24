@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html class="alectryon-standalone"><head><title>L01_Conversion.v</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta content="Alectryon" name="generator"><link href="alectryon.css" rel="stylesheet"><link href="pygments.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/IBM-type/0.5.4/css/ibm-type.min.css" integrity="sha512-sky5cf9Ts6FY1kstGOBHSybfKqdHR41M0Ldb0BjNiv3ifltoQIsg0zIaQ+wwdwgQ0w9vKFW7Js50lxH9vqNSSw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/firacode/5.2.0/fira_code.min.css" integrity="sha512-MbysAYimH1hH2xYzkkMHB6MqxBqfP0megxsCLknbYqHVwXTCg9IqHbk+ZP/vnhO8UEW6PaXAkKe2vQ+SWACxxA==" crossorigin="anonymous" /><script src="alectryon.js"></script></head><body><article class="alectryon-root alectryon-centered"><div class="alectryon-banner">Built with <a href="https://github.com/cpitclaudel/alectryon/">Alectryon</a>, running vsrocq-language-server v9.4+alpha 5.4.1 / 2.5.0. Bubbles (<span class="alectryon-bubble"></span>) indicate interactive fragments: hover for details, tap to reveal contents. Use <kbd>Ctrl+↑</kbd> <kbd>Ctrl+↓</kbd> to navigate, <kbd>Ctrl+🖱️</kbd> to focus. On Mac, use <kbd>⌘</kbd> instead of <kbd>Ctrl</kbd>.</div><pre class="alectryon-io highlight"><!-- Generator: Alectryon --><span class="alectryon-txt"><span class="sd">(** Lesson 1 -- What changes when an equation computes? (~25 minutes.)</span>
+
+<span class="sd">    Run [python3 check.py] from this folder, then visit the L*.v files</span>
+<span class="sd">    in order. README.md explains editor setup. All examples use Corelib.</span>
+
+<span class="sd">    We start with ordinary addition, then declare a fresh symbol whose</span>
+<span class="sd">    rules compute on either argument. Before each [Fail] or [Eval],</span>
+<span class="sd">    predict what Rocq will do. No theorem about the whole rewrite system</span>
+<span class="sd">    is being claimed by these individual examples.</span>
+<span class="sd">*)</span>
+
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">From</span> Corelib <span class="kn">Require Import</span> Init.Nat.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> Guard Checking.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> <span class="kn">Universe</span> <span class="nf">Checking</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk0" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk0"><span class="kn">Test</span> Guard Checking.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Guard Checking <span class="k">is</span> on</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk1" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk1"><span class="kn">Test</span> <span class="kn">Universe</span> <span class="nf">Checking</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="kn">Universe</span> <span class="nf">Checking</span> <span class="k">is</span> on</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Ordinary addition inspects its FIRST argument. A variable blocks</span>
+<span class="sd">    that match, even when the second argument is zero. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk2" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk2"><span class="kn">Print</span> Nat.add.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">add =
+<span class="k">fix</span> add (n m : nat) {<span class="k">struct</span> n} : nat :=
+  <span class="k">match</span> n <span class="k">with</span>
+  | <span class="mi">0</span> =&gt; m
+  | S p =&gt; S (add p m)
+  <span class="k">end</span>
+     : nat -&gt; nat -&gt; nat
+
+<span class="kn">Arguments</span> add (n m)%_nat_scope</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk3" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk3"><span class="kn">Eval</span> <span class="nb">cbn</span> <span class="k">in</span> (<span class="k">fun</span> <span class="nv">n</span> =&gt; <span class="mi">0</span> + n).</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= <span class="k">fun</span> <span class="nv">n</span> : nat =&gt; n
+: nat -&gt; nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk4" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk4"><span class="kn">Eval</span> <span class="nb">cbn</span> <span class="k">in</span> (<span class="k">fun</span> <span class="nv">n</span> =&gt; n + <span class="mi">0</span>).</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= <span class="k">fun</span> <span class="nv">n</span> : nat =&gt; n + <span class="mi">0</span>
+: nat -&gt; nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">ordinary_left_zero</span> : <span class="k">forall</span> <span class="nv">n</span>, <span class="mi">0</span> + n = n :=
+  <span class="k">fun</span> <span class="nv">n</span> =&gt; eq_refl.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk5" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk5"><span class="kn">Fail</span> <span class="kn">Definition</span> <span class="nf">ordinary_right_zero_by_conversion</span> : <span class="k">forall</span> <span class="nv">n</span>, n + <span class="mi">0</span> = n :=
+  <span class="k">fun</span> <span class="nv">n</span> =&gt; eq_refl.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+In environment
+n : nat
+The term <span class="s2">"eq_refl"</span> has type <span class="s2">"n + 0 = n + 0"</span> while it <span class="k">is</span> expected to <span class="nb">have</span> type
+ <span class="s2">"n + 0 = n"</span>
+(cannot <span class="nb">unify</span> <span class="s2">"n + 0"</span> <span class="kn">and</span> <span class="s2">"n"</span>).</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** The missing computational equation is still PROVABLE. Hide this</span>
+<span class="sd">    proof and try it yourself: what is the induction hypothesis? *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk6" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk6"><span class="kn">Lemma</span> <span class="nf">ordinary_right_zero</span> : <span class="k">forall</span> <span class="nv">n</span>, n + <span class="mi">0</span> = n.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="k">forall</span> <span class="nv">n</span> : nat, n + <span class="mi">0</span> = n</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk7" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk7"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="k">forall</span> <span class="nv">n</span> : nat, n + <span class="mi">0</span> = n</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk8" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk8"><span class="nb">induction</span> n <span class="k">as</span> [|n IH].</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="mi">0</span> + <span class="mi">0</span> = <span class="mi">0</span></div></blockquote><div class="alectryon-extra-goals"><input class="alectryon-extra-goal-toggle" id="L01-Conversion-v-chk9" style="display: none" type="checkbox"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>n</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br><span><var>IH</var><span class="hyp-type"><b>: </b><span>n + <span class="mi">0</span> = n</span></span></span><br></div><label class="goal-separator" for="L01-Conversion-v-chk9"><hr></label><div class="goal-conclusion">S n + <span class="mi">0</span> = S n</div></blockquote></div></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chka" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chka">-</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="mi">0</span> + <span class="mi">0</span> = <span class="mi">0</span></div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">reflexivity</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chkb" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chkb">-</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>n</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br><span><var>IH</var><span class="hyp-type"><b>: </b><span>n + <span class="mi">0</span> = n</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">S n + <span class="mi">0</span> = S n</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chkc" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chkc"><span class="nb">cbn</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>n</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br><span><var>IH</var><span class="hyp-type"><b>: </b><span>n + <span class="mi">0</span> = n</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">S (n + <span class="mi">0</span>) = S n</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chkd" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chkd"><span class="nb">rewrite</span> IH.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>n</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br><span><var>IH</var><span class="hyp-type"><b>: </b><span>n + <span class="mi">0</span> = n</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">S n = S n</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">reflexivity</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** [rewrite] uses an equality proof to transform a goal. It does not</span>
+<span class="sd">    install a native rule for [Nat.add]. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chke" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chke"><span class="kn">Example</span> <span class="nf">ordinary_use</span> (<span class="nv">n</span> : nat) : S (n + <span class="mi">0</span>) = S n.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>n</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">S (n + <span class="mi">0</span>) = S n</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chkf" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chkf"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>n</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">S (n + <span class="mi">0</span>) = S n</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk10" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk10"><span class="nb">rewrite</span> ordinary_right_zero.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>n</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">S n = S n</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">reflexivity</span>.</span><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk11" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk11"><span class="kn">Fail</span> <span class="kn">Definition</span> <span class="nf">ordinary_still_stuck</span> : <span class="k">forall</span> <span class="nv">n</span>, n + <span class="mi">0</span> = n :=
+  <span class="k">fun</span> <span class="nv">n</span> =&gt; eq_refl.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+In environment
+n : nat
+The term <span class="s2">"eq_refl"</span> has type <span class="s2">"n + 0 = n + 0"</span> while it <span class="k">is</span> expected to <span class="nb">have</span> type
+ <span class="s2">"n + 0 = n"</span>
+(cannot <span class="nb">unify</span> <span class="s2">"n + 0"</span> <span class="kn">and</span> <span class="s2">"n"</span>).</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** A Symbol has a declared type and no defining body. This declaration</span>
+<span class="sd">    is an assumption about a new operation; it is not a Fixpoint. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input">Symbol pplus : nat -&gt; nat -&gt; nat.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk12" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk12"><span class="kn">Check</span> pplus.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">pplus
+     : nat -&gt; nat -&gt; nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk13" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk13"><span class="kn">Print</span> pplus.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">*** [ pplus : nat -&gt; nat -&gt; nat ]
+
+<span class="kn">Arguments</span> pplus (_ _)%_nat_scope</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk14" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk14"><span class="kn">Fail</span> <span class="kn">Definition</span> <span class="nf">before_rules</span> : <span class="k">forall</span> <span class="nv">n</span>, pplus n <span class="mi">0</span> = n :=
+  <span class="k">fun</span> <span class="nv">n</span> =&gt; eq_refl.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+In environment
+n : nat
+The term <span class="s2">"eq_refl"</span> has type <span class="s2">"pplus n 0 = pplus n 0"</span>
+while it <span class="k">is</span> expected to <span class="nb">have</span> type <span class="s2">"pplus n 0 = n"</span> (cannot <span class="nb">unify</span> 
+<span class="s2">"pplus n 0"</span> <span class="kn">and</span> <span class="s2">"n"</span>).</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Parallel addition, following the native rewrite-rule manual.</span>
+<span class="sd">    [?n] binds a pattern variable. The same name on the right refers to</span>
+<span class="sd">    the matched term. Rules here overlap: overlap is not itself failure</span>
+<span class="sd">    of confluence. That distinction will matter in Lesson 5. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input">Rewrite Rule pplus_rules :=
+| pplus <span class="nl">?n</span> <span class="mi">0</span> =&gt; <span class="nl">?n</span>
+| pplus <span class="nl">?n</span> (S <span class="nl">?m</span>) =&gt; S (pplus <span class="nl">?n</span> <span class="nl">?m</span>)
+| pplus <span class="mi">0</span> <span class="nl">?n</span> =&gt; <span class="nl">?n</span>
+| pplus (S <span class="nl">?n</span>) <span class="nl">?m</span> =&gt; S (pplus <span class="nl">?n</span> <span class="nl">?m</span>).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">native_right_zero</span> : <span class="k">forall</span> <span class="nv">n</span>, pplus n <span class="mi">0</span> = n :=
+  <span class="k">fun</span> <span class="nv">n</span> =&gt; eq_refl.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">native_left_zero</span> : <span class="k">forall</span> <span class="nv">n</span>, pplus <span class="mi">0</span> n = n :=
+  <span class="k">fun</span> <span class="nv">n</span> =&gt; eq_refl.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">native_successors</span> :
+  <span class="k">forall</span> <span class="nv">n</span> <span class="nv">m</span>, pplus (S n) (S m) = S (S (pplus n m)) :=
+  <span class="k">fun</span> <span class="nv">n</span> <span class="nv">m</span> =&gt; eq_refl.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk15" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk15"><span class="kn">Eval</span> <span class="nb">cbn</span> <span class="k">in</span> (<span class="k">fun</span> <span class="nv">n</span> =&gt; pplus n <span class="mi">0</span>).</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= <span class="k">fun</span> <span class="nv">n</span> : nat =&gt; n
+: nat -&gt; nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk16" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk16"><span class="kn">Eval</span> <span class="nb">cbn</span> <span class="k">in</span> (<span class="k">fun</span> <span class="nv">n</span> <span class="nv">m</span> =&gt; pplus (S n) (S m)).</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= <span class="k">fun</span> <span class="nv">n</span> <span class="nv">m</span> : nat =&gt; S (S (pplus n m))
+: nat -&gt; nat -&gt; nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk17" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk17"><span class="kn">Example</span> <span class="nf">concrete_sum</span> : pplus <span class="mi">5</span> <span class="mi">10</span> = <span class="mi">15</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">pplus <span class="mi">5</span> <span class="mi">10</span> = <span class="mi">15</span></div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk18" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk18"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">pplus <span class="mi">5</span> <span class="mi">10</span> = <span class="mi">15</span></div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">reflexivity</span>.</span><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Conversion also aligns TYPES. [P] is an arbitrary family indexed</span>
+<span class="sd">    by natural numbers. Inspect the body: there is no equality transport</span>
+<span class="sd">    in it. The expected and actual types become equal by computation. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">native_reindex</span> (<span class="nv">P</span> : nat -&gt; <span class="kt">Type</span>) (<span class="nv">n</span> : nat)
+  (<span class="nv">x</span> : P (pplus n <span class="mi">0</span>)) : P n := x.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk19" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk19"><span class="kn">Fail</span> <span class="kn">Definition</span> <span class="nf">ordinary_reindex</span> (<span class="nv">P</span> : nat -&gt; <span class="kt">Type</span>) (<span class="nv">n</span> : nat)
+  (<span class="nv">x</span> : P (n + <span class="mi">0</span>)) : P n := x.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+In environment
+P : nat -&gt; <span class="kt">Type</span>
+n : nat
+x : P (n + <span class="mi">0</span>)
+The term <span class="s2">"x"</span> has type <span class="s2">"P (n + 0)"</span> while it <span class="k">is</span> expected to <span class="nb">have</span> type <span class="s2">"P n"</span>.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk1a" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk1a"><span class="kn">Print</span> native_right_zero.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">native_right_zero =
+<span class="k">fun</span> <span class="nv">n</span> : nat =&gt; eq_refl
+     : <span class="k">forall</span> <span class="nv">n</span> : nat, pplus n <span class="mi">0</span> = n
+
+<span class="kn">Arguments</span> native_right_zero n%_nat_scope</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk1b" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk1b"><span class="kn">Print</span> native_reindex.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">native_reindex =
+<span class="k">fun</span> (<span class="nv">P</span> : nat -&gt; <span class="kt">Type</span>) (<span class="nv">n</span> : nat) (<span class="nv">x</span> : P (pplus n <span class="mi">0</span>)) =&gt; x
+     : <span class="k">forall</span> (<span class="nv">P</span> : nat -&gt; <span class="kt">Type</span>) (<span class="nv">n</span> : nat), P (pplus n <span class="mi">0</span>) -&gt; P n
+
+<span class="kn">Arguments</span> native_reindex P%_function_scope n%_nat_scope x</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk1c" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk1c"><span class="kn">Print Assumptions</span> ordinary_right_zero.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Theory:
+Rewrite rules are allowed (subject reduction might be broken)</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Conversion-v-chk1d" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Conversion-v-chk1d"><span class="kn">Print Assumptions</span> native_right_zero.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="kn">Axioms</span>:
+pplus : nat -&gt; nat -&gt; nat
+Theory:
+Rewrite rules are allowed (subject reduction might be broken)</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Checkpoint</span>
+
+<span class="sd">    1. Why can [eq_refl] prove [native_right_zero]?</span>
+<span class="sd">    2. Did proving [ordinary_right_zero] change computation of [Nat.add]?</span>
+<span class="sd">    3. Which assumption and theory flag appear for the native example?</span>
+<span class="sd">    4. Does one successful equality prove confluence or termination?</span>
+
+<span class="sd">    Cues: conversion uses the registered rule; an equality theorem does</span>
+<span class="sd">    not change native reduction; the symbol [pplus] and rewrite opt-in</span>
+<span class="sd">    are reported; testing equalities establishes those examples only.</span>
+
+<span class="sd">    Next: L02_Patterns.v -- which declarations are actually rejected?</span>
+<span class="sd">*)</span>
+</span></pre></article></body></html>

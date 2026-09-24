@@ -51,10 +51,10 @@ Each script uses the surrounding checkout's compiler and Corelib, records its ve
 python3 render.py --setup
 ```
 
-Rerun setup after rebuilding the checkout. Then compile the studies and render them into the ignored `site/` folder:
+Rerun setup after rebuilding the checkout. Then compile the studies and render them into `docs/`, which GitHub Pages publishes at <https://rocq-studies.metareflection.club>:
 
 ```sh
 python3 termination/check.py && python3 rewrite-rules/check.py
 python3 render.py            # or: python3 render.py termination
-open site/index.html
+open docs/index.html
 ```

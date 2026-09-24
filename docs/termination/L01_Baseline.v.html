@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html class="alectryon-standalone"><head><title>L01_Baseline.v</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta content="Alectryon" name="generator"><link href="alectryon.css" rel="stylesheet"><link href="pygments.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/IBM-type/0.5.4/css/ibm-type.min.css" integrity="sha512-sky5cf9Ts6FY1kstGOBHSybfKqdHR41M0Ldb0BjNiv3ifltoQIsg0zIaQ+wwdwgQ0w9vKFW7Js50lxH9vqNSSw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/firacode/5.2.0/fira_code.min.css" integrity="sha512-MbysAYimH1hH2xYzkkMHB6MqxBqfP0megxsCLknbYqHVwXTCg9IqHbk+ZP/vnhO8UEW6PaXAkKe2vQ+SWACxxA==" crossorigin="anonymous" /><script src="alectryon.js"></script></head><body><article class="alectryon-root alectryon-centered"><div class="alectryon-banner">Built with <a href="https://github.com/cpitclaudel/alectryon/">Alectryon</a>, running vsrocq-language-server v9.4+alpha 5.4.1 / 2.5.0. Bubbles (<span class="alectryon-bubble"></span>) indicate interactive fragments: hover for details, tap to reveal contents. Use <kbd>Ctrl+↑</kbd> <kbd>Ctrl+↓</kbd> to navigate, <kbd>Ctrl+🖱️</kbd> to focus. On Mac, use <kbd>⌘</kbd> instead of <kbd>Ctrl</kbd>.</div><pre class="alectryon-io highlight"><!-- Generator: Alectryon --><span class="alectryon-txt"><span class="sd">(** Lesson 1 -- What does the baseline establish? (About 20 minutes.)</span>
+
+<span class="sd">    Start here after running [python3 check.py] from this folder.</span>
+<span class="sd">    Editor/load-path instructions are in README.md.</span>
+<span class="sd">    Step through the commands; predict each result before executing it.</span>
+
+<span class="sd">    [Euclid.v] contains the complete algorithm and arithmetic proofs.</span>
+<span class="sd">    Open it alongside this lesson when you want to inspect the proofs.</span>
+<span class="sd">    This lesson covers Phase 1 of study_plan.md.</span>
+<span class="sd">*)</span>
+
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">From</span> Corelib <span class="kn">Require Import</span> Init.Nat Program.Wf.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">From</span> TerminationStudy <span class="kn">Require Import</span> Euclid.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> Guard Checking.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> <span class="kn">Universe</span> <span class="nf">Checking</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk0" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk0"><span class="kn">Test</span> Guard Checking.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Guard Checking <span class="k">is</span> on</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk1" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk1"><span class="kn">Test</span> <span class="kn">Universe</span> <span class="nf">Checking</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message"><span class="kn">Universe</span> <span class="nf">Checking</span> <span class="k">is</span> on</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** The imported function has a plain computational interface. Its type</span>
+<span class="sd">    promises a natural number, not a proof that this number is the gcd. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk2" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk2"><span class="kn">Check</span> euclid_sub.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_sub
+     : nat -&gt; nat -&gt; nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk3" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk3"><span class="kn">Compute</span> (euclid_sub <span class="mi">48</span> <span class="mi">18</span>).</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= <span class="mi">6</span>
+: nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk4" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk4"><span class="kn">Compute</span> (euclid_sub <span class="mi">18</span> <span class="mi">48</span>).</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= <span class="mi">6</span>
+: nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk5" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk5"><span class="kn">Compute</span> (euclid_sub <span class="mi">0</span> <span class="mi">5</span>).</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= <span class="mi">5</span>
+: nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk6" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk6"><span class="kn">Compute</span> (euclid_sub <span class="mi">5</span> <span class="mi">0</span>).</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">= <span class="mi">5</span>
+: nat</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** These equalities make the four observations checked examples. They</span>
+<span class="sd">    do not establish the gcd specification for all inputs. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk7" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk7"><span class="kn">Example</span> <span class="nf">baseline_examples</span> :
+  euclid_sub <span class="mi">48</span> <span class="mi">18</span> = <span class="mi">6</span> /\ euclid_sub <span class="mi">18</span> <span class="mi">48</span> = <span class="mi">6</span> /\
+  euclid_sub <span class="mi">0</span> <span class="mi">5</span> = <span class="mi">5</span> /\ euclid_sub <span class="mi">5</span> <span class="mi">0</span> = <span class="mi">5</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">euclid_sub <span class="mi">48</span> <span class="mi">18</span> = <span class="mi">6</span> /\
+euclid_sub <span class="mi">18</span> <span class="mi">48</span> = <span class="mi">6</span> /\ euclid_sub <span class="mi">0</span> <span class="mi">5</span> = <span class="mi">5</span> /\ euclid_sub <span class="mi">5</span> <span class="mi">0</span> = <span class="mi">5</span></div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk8" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk8"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">euclid_sub <span class="mi">48</span> <span class="mi">18</span> = <span class="mi">6</span> /\
+euclid_sub <span class="mi">18</span> <span class="mi">48</span> = <span class="mi">6</span> /\ euclid_sub <span class="mi">0</span> <span class="mi">5</span> = <span class="mi">5</span> /\ euclid_sub <span class="mi">5</span> <span class="mi">0</span> = <span class="mi">5</span></div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kp">repeat</span> <span class="nb">split</span>; <span class="bp">reflexivity</span>.</span><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk9" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk9"><span class="kn">Print Assumptions</span> euclid_sub.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Fetching opaque proofs <span class="kn">from</span> disk <span class="k">for</span> Corelib.Init.Peano</blockquote><blockquote class="alectryon-message">Closed <span class="nb">under</span> the <span class="kn">global</span> <span class="kp">context</span></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chka" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chka"><span class="kn">Print Assumptions</span> baseline_examples.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Closed <span class="nb">under</span> the <span class="kn">global</span> <span class="kp">context</span></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Predict: can Rocq pick one argument that decreases in BOTH branches?</span>
+
+<span class="sd">    In the [then] branch [a] stays [S a']; in the [else] branch [b] stays</span>
+<span class="sd">    [S b']. A numerical decrease of their sum does not by itself supply</span>
+<span class="sd">    the structural argument of an ordinary Fixpoint.</span>
+
+<span class="sd">    [Fail] asserts rejection and leaves no definition behind. In an</span>
+<span class="sd">    interactive session (or the build log), read the diagnostic.</span>
+<span class="sd">*)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chkb" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chkb"><span class="kn">Fail</span> <span class="kn">Fixpoint</span> <span class="nf">plain</span> (<span class="nv">a</span> <span class="nv">b</span> : nat) : nat :=
+  <span class="k">match</span> a, b <span class="k">with</span>
+  | <span class="mi">0</span>, _ =&gt; b
+  | _, <span class="mi">0</span> =&gt; a
+  | S a', S b' =&gt;
+      <span class="k">if</span> Nat.leb (S a') (S b')
+      <span class="k">then</span> plain (S a') (S b' - S a')
+      <span class="k">else</span> plain (S a' - S b') (S b')
+  <span class="k">end</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+Cannot guess decreasing argument of <span class="k">fix</span>.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** The preceding message is "Cannot guess decreasing argument of fix."</span>
+<span class="sd">    Its source is [pretyping/pretyping.ml:141], in [search_guard].</span>
+<span class="sd">    It summarizes unsuccessful candidate checks during elaboration.</span>
+
+<span class="sd">    To separate inference from checking a specified argument, change</span>
+<span class="sd">    ONLY the structural annotation in the following two copies. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chkc" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chkc"><span class="kn">Fail</span> <span class="kn">Fixpoint</span> <span class="nf">structural_a</span> (<span class="nv">a</span> <span class="nv">b</span> : nat) {<span class="nv">struct</span> <span class="nv">a</span>} : nat :=
+  <span class="k">match</span> a, b <span class="k">with</span>
+  | <span class="mi">0</span>, _ =&gt; b
+  | _, <span class="mi">0</span> =&gt; a
+  | S a', S b' =&gt;
+      <span class="k">if</span> Nat.leb (S a') (S b')
+      <span class="k">then</span> structural_a (S a') (S b' - S a')
+      <span class="k">else</span> structural_a (S a' - S b') (S b')
+  <span class="k">end</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+Recursive definition of structural_a <span class="k">is</span> ill-formed.
+In environment
+structural_a : nat -&gt; nat -&gt; nat
+a : nat
+b : nat
+a' : nat
+b' : nat
+Recursive call to structural_a has principal argument equal to 
+<span class="s2">"S a'"</span> instead of <span class="s2">"a'"</span>.
+Recursive definition <span class="k">is</span>:
+<span class="s2">"fun a b : nat =&gt;</span>
+<span class="s2"> match a with</span>
+<span class="s2"> | 0 =&gt; b</span>
+<span class="s2"> | S a' =&gt;</span>
+<span class="s2">     match b with</span>
+<span class="s2">     | 0 =&gt; a</span>
+<span class="s2">     | S b' =&gt;</span>
+<span class="s2">         if S a' &lt;=? S b'</span>
+<span class="s2">         then structural_a (S a') (S b' - S a')</span>
+<span class="s2">         else structural_a (S a' - S b') (S b')</span>
+<span class="s2">     end</span>
+<span class="s2"> end"</span>.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chkd" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chkd"><span class="kn">Fail</span> <span class="kn">Fixpoint</span> <span class="nf">structural_b</span> (<span class="nv">a</span> <span class="nv">b</span> : nat) {<span class="nv">struct</span> <span class="nv">b</span>} : nat :=
+  <span class="k">match</span> a, b <span class="k">with</span>
+  | <span class="mi">0</span>, _ =&gt; b
+  | _, <span class="mi">0</span> =&gt; a
+  | S a', S b' =&gt;
+      <span class="k">if</span> Nat.leb (S a') (S b')
+      <span class="k">then</span> structural_b (S a') (S b' - S a')
+      <span class="k">else</span> structural_b (S a' - S b') (S b')
+  <span class="k">end</span>.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+Recursive definition of structural_b <span class="k">is</span> ill-formed.
+In environment
+structural_b : nat -&gt; nat -&gt; nat
+a : nat
+b : nat
+a' : nat
+b' : nat
+Recursive call to structural_b has principal argument equal to 
+<span class="s2">"S b'"</span> instead of <span class="s2">"b'"</span>.
+Recursive definition <span class="k">is</span>:
+<span class="s2">"fun a b : nat =&gt;</span>
+<span class="s2"> match a with</span>
+<span class="s2"> | 0 =&gt; b</span>
+<span class="s2"> | S a' =&gt;</span>
+<span class="s2">     match b with</span>
+<span class="s2">     | 0 =&gt; a</span>
+<span class="s2">     | S b' =&gt;</span>
+<span class="s2">         if S a' &lt;=? S b'</span>
+<span class="s2">         then structural_b (S a') (S b' - S a')</span>
+<span class="s2">         else structural_b (S a' - S b') (S b')</span>
+<span class="s2">     end</span>
+<span class="s2"> end"</span>.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chke" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chke"><span class="kn">Fail</span> <span class="kn">Check</span> plain.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+The reference plain was not found <span class="k">in</span> the current environment.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chkf" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chkf"><span class="kn">Fail</span> <span class="kn">Check</span> structural_a.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+The reference structural_a was not found <span class="k">in</span> the current environment.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk10" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk10"><span class="kn">Fail</span> <span class="kn">Check</span> structural_b.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The command has indeed failed <span class="k">with</span> message:
+The reference structural_b was not found <span class="k">in</span> the current environment.</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Inspect the supporting evidence in [Euclid.v].</span>
+<span class="sd">    A useful surprise: neither decrease lemma needs the [leb] outcome.</span>
+<span class="sd">    Subtracting a positive natural decreases the sum in either branch,</span>
+<span class="sd">    even with truncated subtraction. Branch selection matters to the</span>
+<span class="sd">    gcd algorithm, but these termination inequalities do not use it. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk11" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk11"><span class="kn">Check</span> TerminationFacts.subtract_right_decreases.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">TerminationFacts.subtract_right_decreases
+     : <span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat, S a + (S b - S a) &lt; S a + S b</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk12" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk12"><span class="kn">Check</span> TerminationFacts.subtract_left_decreases.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">TerminationFacts.subtract_left_decreases
+     : <span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat, S a - S b + S b &lt; S a + S b</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L01-Baseline-v-chk13" style="display: none" type="checkbox"><label class="alectryon-input" for="L01-Baseline-v-chk13"><span class="kn">Check</span> TerminationFacts.nat_lt_wf.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">TerminationFacts.nat_lt_wf
+     : well_founded lt</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Checkpoint -- explain these before going on:</span>
+
+<span class="sd">    1. Which recursive call rules out {struct a}? Which rules out {struct b}?</span>
+<span class="sd">    2. What does "Closed under the global context" tell you? Does it</span>
+<span class="sd">       establish that [euclid_sub] computes the gcd for every input?</span>
+<span class="sd">    3. Where did the plain-definition diagnostic originate?</span>
+
+<span class="sd">    Answer cues: unchanged first argument in [then]; unchanged second</span>
+<span class="sd">    argument in [else]; no global axioms in this constant's dependencies;</span>
+<span class="sd">    no general gcd theorem; [Pretyping.search_guard].</span>
+
+<span class="sd">    Next: L02_Obligations.v -- where do the proofs attach to the program?</span>
+<span class="sd">*)</span>
+</span></pre></article></body></html>

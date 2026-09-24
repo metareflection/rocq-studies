@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html class="alectryon-standalone"><head><title>L04_Admission.v</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta content="Alectryon" name="generator"><link href="alectryon.css" rel="stylesheet"><link href="pygments.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/IBM-type/0.5.4/css/ibm-type.min.css" integrity="sha512-sky5cf9Ts6FY1kstGOBHSybfKqdHR41M0Ldb0BjNiv3ifltoQIsg0zIaQ+wwdwgQ0w9vKFW7Js50lxH9vqNSSw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/firacode/5.2.0/fira_code.min.css" integrity="sha512-MbysAYimH1hH2xYzkkMHB6MqxBqfP0megxsCLknbYqHVwXTCg9IqHbk+ZP/vnhO8UEW6PaXAkKe2vQ+SWACxxA==" crossorigin="anonymous" /><script src="alectryon.js"></script></head><body><article class="alectryon-root alectryon-centered"><div class="alectryon-banner">Built with <a href="https://github.com/cpitclaudel/alectryon/">Alectryon</a>, running vsrocq-language-server v9.4+alpha 5.4.1 / 2.5.0. Bubbles (<span class="alectryon-bubble"></span>) indicate interactive fragments: hover for details, tap to reveal contents. Use <kbd>Ctrl+↑</kbd> <kbd>Ctrl+↓</kbd> to navigate, <kbd>Ctrl+🖱️</kbd> to focus. On Mac, use <kbd>⌘</kbd> instead of <kbd>Ctrl</kbd>.</div><pre class="alectryon-io highlight"><!-- Generator: Alectryon --><span class="alectryon-txt"><span class="sd">(** Lesson 4 -- What was actually installed? (About 20 minutes.)</span>
+
+<span class="sd">    Read after L03_Accessibility.v. This closes the Phase 2 walkthrough.</span>
+<span class="sd">    Source paths below are relative to the Rocq checkout; README.md has</span>
+<span class="sd">    the source map with line references and the recorded commit.</span>
+<span class="sd">*)</span>
+
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">From</span> Corelib <span class="kn">Require Import</span> Init.Nat Program.Wf.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">From</span> TerminationStudy <span class="kn">Require Import</span> L02_Obligations L03_Accessibility.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> Guard Checking.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kt">Set</span> <span class="kn">Universe</span> <span class="nf">Checking</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** The public wrapper only packs arguments for the generated function.</span>
+<span class="sd">    This is a checked equality for arbitrary inputs, by conversion. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chk0" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chk0"><span class="kn">Print</span> euclid_trace.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace =
+<span class="k">fun</span> <span class="nv">a</span> <span class="nv">b</span> : nat =&gt; euclid_trace_func (existT (<span class="k">fun</span> <span class="nv">_</span> : nat =&gt; nat) a b)
+     : nat -&gt; nat -&gt; nat
+
+<span class="kn">Arguments</span> euclid_trace (a b)%_nat_scope</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chk1" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chk1"><span class="kn">Example</span> <span class="nf">wrapper_is_generated_function</span> (<span class="nv">a</span> <span class="nv">b</span> : nat) :
+  euclid_trace a b = euclid_trace_func (pack a b).</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a, b</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">euclid_trace a b = euclid_trace_func (pack a b)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chk2" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chk2"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a, b</var><span class="hyp-type"><b>: </b><span>nat</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">euclid_trace a b = euclid_trace_func (pack a b)</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">reflexivity</span>.</span><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Inspect the artifact and its evidence. In [euclid_trace_func], find</span>
+<span class="sd">    the application of [Fix_sub], the reference to obligation 4, and</span>
+<span class="sd">    the two calls carrying obligations 1 and 2. Obligation 3 belongs</span>
+<span class="sd">    to the elaborated match. The full output stays in this lesson's log. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chk3" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chk3"><span class="kn">Print</span> euclid_trace_func.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">euclid_trace_func =
+Fix_sub {_ : nat &amp; nat}
+  (MR lt
+     (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+      <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b))
+  L02_Obligations.euclid_trace_func_obligation_4
+  (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+   <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> nat)
+  (<span class="k">fun</span> (<span class="nv">recarg</span> : {_ : nat &amp; nat})
+     (<span class="nv">euclid_trace'</span> : <span class="k">forall</span>
+                        <span class="nv">recarg'</span> : {recarg' : {_ : nat &amp; nat}
+                                  | (<span class="k">let</span> <span class="nv">a</span> := projT1 recarg' <span class="k">in</span>
+                                     <span class="k">let</span> <span class="nv">b</span> := projT2 recarg' <span class="k">in</span> a + b) &lt;
+                                    (<span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span>
+                                     <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b)},
+                      <span class="k">let</span> <span class="nv">a</span> := projT1 (proj1_sig recarg') <span class="k">in</span>
+                      <span class="k">let</span> <span class="nv">b</span> := projT2 (proj1_sig recarg') <span class="k">in</span> nat) =&gt;
+   <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span>
+   <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span>
+   <span class="k">let</span> <span class="nv">euclid_trace</span> :=
+     <span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat) (<span class="nv">recproof</span> : a0 + b0 &lt; a + b) =&gt;
+     euclid_trace'
+       (exist
+          (<span class="k">fun</span> <span class="nv">recarg'</span> : {_ : nat &amp; nat} =&gt;
+           (<span class="k">let</span> <span class="nv">a1</span> := projT1 recarg' <span class="k">in</span> <span class="k">let</span> <span class="nv">b1</span> := projT2 recarg' <span class="k">in</span> a1 + b1) &lt;
+           (<span class="k">let</span> <span class="nv">a1</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b1</span> := projT2 recarg <span class="k">in</span> a1 + b1))
+          (existT (<span class="k">fun</span> <span class="nv">_</span> : nat =&gt; nat) a0 b0) recproof)
+     <span class="k">in</span>
+   <span class="k">let</span> <span class="nv">program_branch_0</span> :=
+     <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat) (<span class="nv">_</span> : <span class="mi">0</span> = a) (<span class="nv">_</span> : wildcard' = b) =&gt; b <span class="k">in</span>
+   <span class="k">let</span> <span class="nv">program_branch_1</span> :=
+     <span class="k">fun</span> (<span class="nv">wildcard'</span> : nat)
+       (<span class="nv">_</span> : <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>))
+       (<span class="nv">_</span> : wildcard' = a) (<span class="nv">_</span> : <span class="mi">0</span> = b) =&gt;
+     a <span class="k">in</span>
+   <span class="k">let</span> <span class="nv">program_branch_2</span> :=
+     <span class="k">fun</span> (<span class="nv">a'</span> <span class="nv">b'</span> : nat) (<span class="nv">Heq_a</span> : S a' = a) (<span class="nv">Heq_b</span> : S b' = b) =&gt;
+     <span class="k">if</span> S a' &lt;=? S b'
+     <span class="k">then</span>
+      euclid_trace (S a') (S b' - S a')
+        ((<span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat)
+            (<span class="nv">recurse</span> : <span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b1</span> : nat, a1 + b1 &lt; a0 + b0 -&gt; nat)
+            (<span class="nv">a'0</span> <span class="nv">b'0</span> : nat) (<span class="nv">Ha</span> : S a'0 = a0) (<span class="nv">Hb</span> : S b'0 = b0) =&gt;
+          L02_Obligations.euclid_trace_func_obligation_1 a0 b0 recurse a'0
+            b'0 Ha Hb)
+           a b euclid_trace a' b' Heq_a Heq_b)
+     <span class="k">else</span>
+      euclid_trace (S a' - S b') (S b')
+        ((<span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat)
+            (<span class="nv">recurse</span> : <span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b1</span> : nat, a1 + b1 &lt; a0 + b0 -&gt; nat)
+            (<span class="nv">a'0</span> <span class="nv">b'0</span> : nat) (<span class="nv">Ha</span> : S a'0 = a0) (<span class="nv">Hb</span> : S b'0 = b0) =&gt;
+          L02_Obligations.euclid_trace_func_obligation_2 a0 b0 recurse a'0
+            b'0 Ha Hb)
+           a b euclid_trace a' b' Heq_a Heq_b)
+     <span class="k">in</span>
+   <span class="k">match</span> a <span class="k">as</span> a' <span class="k">return</span> a' = a -&gt; b = b -&gt; nat <span class="k">with</span>
+   | <span class="mi">0</span> =&gt; program_branch_0 b
+   | S a' =&gt;
+       <span class="k">match</span> b <span class="k">as</span> b' <span class="k">return</span> S a' = a -&gt; b' = b -&gt; nat <span class="k">with</span>
+       | <span class="mi">0</span> =&gt;
+           program_branch_1 (S a')
+             ((<span class="k">fun</span> (<span class="nv">a0</span> <span class="nv">b0</span> : nat)
+                 (<span class="nv">_</span> : <span class="k">forall</span> <span class="nv">a1</span> <span class="nv">b1</span> : nat, a1 + b1 &lt; a0 + b0 -&gt; nat)
+                 (<span class="nv">n</span> <span class="nv">wildcard'</span> : nat) =&gt;
+               L02_Obligations.euclid_trace_func_obligation_3 n wildcard') a
+                b euclid_trace a')
+       | S b' =&gt; program_branch_2 a' b'
+       <span class="k">end</span>
+   <span class="k">end</span> eq_refl eq_refl)
+     : <span class="k">forall</span> <span class="nv">recarg</span> : {_ : nat &amp; nat},
+       <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> nat
+
+<span class="kn">Arguments</span> euclid_trace_func recarg</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt"><span class="c">(* Generated obligations require qualification after importing a module. *)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chk4" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chk4"><span class="kn">Check</span> L02_Obligations.euclid_trace_func_obligation_1.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">L02_Obligations.euclid_trace_func_obligation_1
+     : <span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat,
+       (<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat) -&gt;
+       <span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat,
+       S a' = a -&gt; S b' = b -&gt; S a' + (S b' - S a') &lt; a + b</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chk5" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chk5"><span class="kn">Check</span> L02_Obligations.euclid_trace_func_obligation_2.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">L02_Obligations.euclid_trace_func_obligation_2
+     : <span class="k">forall</span> <span class="nv">a</span> <span class="nv">b</span> : nat,
+       (<span class="k">forall</span> <span class="nv">a0</span> <span class="nv">b0</span> : nat, a0 + b0 &lt; a + b -&gt; nat) -&gt;
+       <span class="k">forall</span> <span class="nv">a'</span> <span class="nv">b'</span> : nat, S a' = a -&gt; S b' = b -&gt; S a' - S b' + S b' &lt; a + b</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chk6" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chk6"><span class="kn">Check</span> L02_Obligations.euclid_trace_func_obligation_3.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">L02_Obligations.euclid_trace_func_obligation_3
+     : <span class="k">forall</span> <span class="nv">n</span> : nat,
+       <span class="k">let</span> <span class="nv">wildcard'</span> := S n <span class="k">in</span>
+       <span class="k">forall</span> <span class="nv">wildcard'0</span> : nat, ~ (<span class="mi">0</span> = wildcard' /\ wildcard'0 = <span class="mi">0</span>)</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chk7" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chk7"><span class="kn">Check</span> L02_Obligations.euclid_trace_func_obligation_4.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">L02_Obligations.euclid_trace_func_obligation_4
+     : well_founded
+         (MR lt
+            (<span class="k">fun</span> <span class="nv">recarg</span> : {_ : nat &amp; nat} =&gt;
+             <span class="k">let</span> <span class="nv">a</span> := projT1 recarg <span class="k">in</span> <span class="k">let</span> <span class="nv">b</span> := projT2 recarg <span class="k">in</span> a + b))</blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chk8" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chk8"><span class="kn">Example</span> <span class="nf">installed_examples</span> :
+  euclid_trace <span class="mi">48</span> <span class="mi">18</span> = <span class="mi">6</span> /\ euclid_trace <span class="mi">18</span> <span class="mi">48</span> = <span class="mi">6</span> /\
+  euclid_trace <span class="mi">0</span> <span class="mi">5</span> = <span class="mi">5</span> /\ euclid_trace <span class="mi">5</span> <span class="mi">0</span> = <span class="mi">5</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">euclid_trace <span class="mi">48</span> <span class="mi">18</span> = <span class="mi">6</span> /\
+euclid_trace <span class="mi">18</span> <span class="mi">48</span> = <span class="mi">6</span> /\ euclid_trace <span class="mi">0</span> <span class="mi">5</span> = <span class="mi">5</span> /\ euclid_trace <span class="mi">5</span> <span class="mi">0</span> = <span class="mi">5</span></div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chk9" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chk9"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">euclid_trace <span class="mi">48</span> <span class="mi">18</span> = <span class="mi">6</span> /\
+euclid_trace <span class="mi">18</span> <span class="mi">48</span> = <span class="mi">6</span> /\ euclid_trace <span class="mi">0</span> <span class="mi">5</span> = <span class="mi">5</span> /\ euclid_trace <span class="mi">5</span> <span class="mi">0</span> = <span class="mi">5</span></div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kp">repeat</span> <span class="nb">split</span>; <span class="bp">reflexivity</span>.</span><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chka" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chka"><span class="kn">Print Assumptions</span> euclid_trace.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Fetching opaque proofs <span class="kn">from</span> disk <span class="k">for</span> Corelib.Init.Peano</blockquote><blockquote class="alectryon-message">Closed <span class="nb">under</span> the <span class="kn">global</span> <span class="kp">context</span></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chkb" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chkb"><span class="kn">Print Assumptions</span> euclid_trace_func.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Closed <span class="nb">under</span> the <span class="kn">global</span> <span class="kp">context</span></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chkc" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chkc"><span class="kn">Print Assumptions</span> L02_Obligations.euclid_trace_func_obligation_1.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Closed <span class="nb">under</span> the <span class="kn">global</span> <span class="kp">context</span></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chkd" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chkd"><span class="kn">Print Assumptions</span> L02_Obligations.euclid_trace_func_obligation_4.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Closed <span class="nb">under</span> the <span class="kn">global</span> <span class="kp">context</span></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chke" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chke"><span class="kn">Print Assumptions</span> wrapper_is_generated_function.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Closed <span class="nb">under</span> the <span class="kn">global</span> <span class="kp">context</span></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="L04-Admission-v-chkf" style="display: none" type="checkbox"><label class="alectryon-input" for="L04-Admission-v-chkf"><span class="kn">Print Assumptions</span> installed_examples.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">Closed <span class="nb">under</span> the <span class="kn">global</span> <span class="kp">context</span></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-txt">
+<span class="sd">(** Follow one call, end to end:</span>
+
+<span class="sd">    source: euclid_trace (S a') (S b' - S a')</span>
+<span class="sd">      -&gt; a recursive-function argument with an extra decrease proof</span>
+<span class="sd">      -&gt; [exist] carrying [existT ...] and obligation 1's proof</span>
+<span class="sd">      -&gt; [Fix_sub] invokes [Fix_F_sub] with obligation 4's [Acc] proof</span>
+<span class="sd">      -&gt; [Acc_inv] uses that call's proof to select a child [Acc] proof</span>
+<span class="sd">      -&gt; [Fix_F_sub] recurses structurally on this child proof.</span>
+
+<span class="sd">    The generated Euclid body is an ordinary term applying an existing</span>
+<span class="sd">    recursor. [Fix_F_sub]'s recursive body was checked when Corelib was</span>
+<span class="sd">    built; declaring Euclid does not reinstall that library definition.</span>
+
+<span class="sd">    Implementation trail at commit</span>
+<span class="sd">    67ab16a375d31812dc1dd788f92d446d7d6dcd45:</span>
+
+<span class="sd">    - vernac/comFixpoint.ml: [encapsulate_Fix_sub], [build_wellfounded]</span>
+<span class="sd">      build the relation, proof holes, recursor application, and wrapper.</span>
+<span class="sd">    - vernac/declare.ml: [prepare_obligations], [declare_obligation],</span>
+<span class="sd">      [obligation_substitution], [update_obls], [declare_definition]</span>
+<span class="sd">      connect solved evidence to the proposed term and complete it.</span>
+<span class="sd">    - vernac/declare.ml: [declare_constant] calls [Global.add_constant].</span>
+<span class="sd">    - kernel/safe_typing.ml: [add_constant] checks a definition before</span>
+<span class="sd">      adding its constant body to the environment.</span>
+<span class="sd">    - kernel/typeops.ml: the [Fix] case calls [Inductive.check_fix];</span>
+<span class="sd">      kernel/inductive.ml implements the guard check.</span>
+
+<span class="sd">    Thus the proof-producing elaborator and tactics may change while</span>
+<span class="sd">    their output remains subject to the existing kernel's checks.</span>
+<span class="sd">    This observation does not justify changing the kernel or its rules.</span>
+
+<span class="sd">    In the study's vocabulary:</span>
+<span class="sd">    substrate = the existing core theory and environment;</span>
+<span class="sd">    proposer = source author plus elaboration/proof-producing tools;</span>
+<span class="sd">    evidence = the typed decrease and well-foundedness proof terms;</span>
+<span class="sd">    gate = kernel checking of the resulting declarations, with guards</span>
+<span class="sd">           and universe checking enabled;</span>
+<span class="sd">    admission policy = add definitions accepted under those core rules;</span>
+<span class="sd">    reflective depth = construct terms in the existing theory.</span>
+
+<span class="sd">    We have not added native reduction rules. We have not proved a</span>
+<span class="sd">    general guarantee about all future admission histories. Changing</span>
+<span class="sd">    conversion or the gate itself requires a different argument.</span>
+<span class="sd">*)</span>
+
+<span class="sd">(** Stop for discussion here, as requested in study_plan.md.</span>
+
+<span class="sd">    Explain the trace using [right_call] and [Fix_F_sub], then ask:</span>
+<span class="sd">    what evidence must remain transparent for this function to compute?</span>
+<span class="sd">    That is an open experimental question for Phase 3.</span>
+
+<span class="sd">    Later checkpoints are planned in README.md: controlled changes,</span>
+<span class="sd">    the scope of the admission discipline, then native rewrite rules.</span>
+<span class="sd">    This import shows how we use the saved lesson; it is not a claim</span>
+<span class="sd">    that normal [Require Import] independently rechecks every proof.</span>
+<span class="sd">*)</span>
+</span></pre></article></body></html>
